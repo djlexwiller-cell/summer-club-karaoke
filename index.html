@@ -333,6 +333,23 @@ function renderSongs(filter=""){
 
 async function sendRequest(){
 
+ const lastRequest =
+  localStorage.getItem("lastRequest");
+
+if(lastRequest){
+
+  const secondsPassed =
+    (Date.now() - Number(lastRequest)) / 1000;
+
+  if(secondsPassed < 30){
+
+    alert(
+      `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta toivetta`
+    );
+
+    return;
+  }
+}
   if(!selectedSong){
 
     alert("Valitse kappale 🎵");
@@ -370,6 +387,11 @@ async function sendRequest(){
   try{
 
     await fetch(WEBHOOK_URL, {
+
+     localStorage.setItem(
+      "lastRequest",
+      Date.now()
+     );
 
       method:"POST",
 
@@ -456,6 +478,24 @@ function toggleSuggestionBox(){
 }
 
 async function sendSuggestion(){
+
+  const lastRequest =
+  localStorage.getItem("lastRequest");
+
+if(lastRequest){
+
+  const secondsPassed =
+    (Date.now() - Number(lastRequest)) / 1000;
+
+  if(secondsPassed < 30){
+
+    alert(
+      `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta toivetta`
+    );
+
+    return;
+  }
+}
 
   const artist =
     document.getElementById("suggestArtist").value;
