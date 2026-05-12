@@ -505,9 +505,13 @@ async function endNight(){
   }
 }
 
+loadPin();
+
 loadRequests();
 
 setInterval(()=>{
+
+  loadPin();
 
   loadRequests();
 
