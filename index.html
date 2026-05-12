@@ -606,13 +606,10 @@ async function loadPin(){
 
   if(rows[0]){
 
-    const cols =
-      rows[0].split(",");
-
-    currentPin =
-      cols[1]
-        .replace(/\"/g,"")
-        .trim();
+   currentPin =
+   rows[0]
+    .replace(/\"/g,"")
+    .trim();
   }
 
   const savedPin =
