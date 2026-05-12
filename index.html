@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Summer Club Karaoke Lista</title>
+
+  <style>
+    body{
+      background:#111;
+      color:white;
+      font-family:Arial;
+      max-width:700px;
+      margin:auto;
+      padding:20px;
+    }
+
+    h1{
+      font-size:40px;
+    }
+
+    input, textarea{
+      width:100%;
+      padding:15px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+      background:#222;
+      color:white;
+    }
+
+    button{
+      margin-top:15px;
+      padding:15px;
+      width:100%;
+      border:none;
+      border-radius:10px;
+      background:#ff0088;
+      color:white;
+      font-size:18px;
+      cursor:pointer;
+    }
+
+    .song{
+      background:#1b1b1b;
+      padding:15px;
+      margin-top:10px;
+      border-radius:12px;
+      cursor:pointer;
+    }
+
+    .song:hover{
+      background:#2b2b2b;
+    }
+
+    .selected{
+      border:2px solid #ff0088;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎤 Summer Club Karaoke Lista</h1>
+
+<p>Hae kappale tai artisti ja lähetä biisitoive DJ:lle.</p>
+
+<input id="search" placeholder="Hae biisiä tai artistia...">
+
+<div id="songs"></div>
+
+<h2>🙋 Toivojan nimi</h2>
+<input id="name" placeholder="Esim. Mikko">
+
+<h2>📣 Terveiset DJ:lle</h2>
+<textarea id="message" placeholder="Shoutoutit, synttärit, terveiset..."></textarea>
+
+<button onclick="sendRequest()">Lähetä biisitoive</button>
+
+<script>
+
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
+
+const songs = [
+  {
+    artist:"Backstreet Boys",
+    song:"Everybody"
+  },
+  {
+    artist:"Britney Spears",
+    song:"Toxic"
+  },
+  {
+    artist:"DJ Ötzi",
+    song:"Hey Baby"
+  },
+  {
+    artist:"Käärijä",
+    song:"Cha Cha Cha"
+  },
+  {
+    artist:"Queen",
+    song:"Don't Stop Me Now"
+  }
+];
+
+let selectedSong = null;
+
+const songsDiv = document.getElementById("songs");
+const searchInput = document.getElementById("search");
+
+function renderSongs(filter=""){
+
+  songsDiv.innerHTML = "";
+
+  songs
+    .filter(item =>
+      item.artist.toLowerCase().includes(filter.toLowerCase()) ||
+      item.song.toLowerCase().includes(filter.toLowerCase())
+    )
+    .forEach(item => {
+
+      const div = document.createElement("div");
+
+      div.className = "song";
+
+      div.innerHTML = `
+        <strong>${item.song}</strong><br>
+        ${item.artist}
+      `;
+
+      div.onclick = () => {
+
+        selectedSong = item;
+
+        document
+          .querySelectorAll(".song")
+          .forEach(el => el.classList.remove("selected"));
+
+        div.classList.add("selected");
+      };
+
+      songsDiv.appendChild(div);
+    });
+}
+
+searchInput.addEventListener("input", e => {
+  renderSongs(e.target.value);
+});
+
+renderSongs();
+
+async function sendRequest(){
+
+  if(!selectedSong){
+    alert("Valitse kappale");
+    return;
+  }
+
+  const payload = {
+    name: document.getElementById("name").value,
+    artist: selectedSong.artist,
+    song: selectedSong.song,
+    message: document.getElementById("message").value
+  };
+
+  try{
+
+    await fetch(WEBHOOK_URL,{
+      method:"POST",
+      body:JSON.stringify(payload)
+    });
+
+    alert("Biisitoive lähetetty 🔥");
+
+  }catch(err){
+
+    alert("Virhe lähetyksessä");
+  }
+}
+
+</script>
+
+</body>
+</html>
