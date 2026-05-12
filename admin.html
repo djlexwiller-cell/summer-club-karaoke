@@ -229,6 +229,9 @@ async function loadRequests(){
     requestFeed.innerHTML = "";
 
     rows.forEach((row,index)=>{
+      if(!row || row.trim() === ""){
+      return;
+      }
 
       const cols = row.split(",");
 
