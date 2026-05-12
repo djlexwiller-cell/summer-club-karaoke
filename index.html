@@ -147,6 +147,38 @@ button:hover{
 
 <body>
 
+<div id="pinScreen" style="
+  position:fixed;
+  inset:0;
+  background:#0f0f0f;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  padding:20px;
+">
+
+  <h1>🎟️ Syötä tämän illan bilekoodi</h1>
+
+  <input
+    type="text"
+    id="pinInput"
+    placeholder="Esim. CLUB482"
+    style="
+      max-width:300px;
+      text-align:center;
+      font-size:22px;
+      margin-top:20px;
+    "
+  />
+
+  <button onclick="checkPin()" style="max-width:300px;">
+    🔓 Avaa bilekaraoke
+  </button>
+
+</div>
+
 <div class="container">
 
 <h1>🎤 Summer Club Karaoke Lista</h1>
@@ -555,7 +587,75 @@ localStorage.setItem(
     alert("❌ Lähetys epäonnistui");
   }
 } 
-  
+
+  const PIN_CSV_URL =
+"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/gviz/tq?tqx=out:csv&sheet=Pin";
+
+let currentPin = "";
+
+async function loadPin(){
+
+  const response =
+    await fetch(PIN_CSV_URL);
+
+  const text =
+    await response.text();
+
+  const rows =
+    text.split("\\n");
+
+  if(rows[1]){
+
+    const cols =
+      rows[1].split(",");
+
+    currentPin =
+      cols[1]
+        .replace(/\"/g,\"\" )
+        .trim();
+  }
+
+  const savedPin =
+    localStorage.getItem("eventPin");
+
+  if(savedPin === currentPin){
+
+    document
+      .getElementById("pinScreen")
+      .style.display = "none";
+  }
+}
+
+async function checkPin(){
+
+  const enteredPin =
+    document
+      .getElementById("pinInput")
+      .value
+      .trim();
+
+  if(
+    enteredPin.toUpperCase() ===
+    currentPin.toUpperCase()
+  ){
+
+    localStorage.setItem(
+      "eventPin",
+      currentPin
+    );
+
+    document
+      .getElementById("pinScreen")
+      .style.display = "none";
+
+  }else{
+
+    alert("❌ Väärä bilekoodi");
+  }
+}
+
+loadPin();
+ 
 renderSongs();
     
   
