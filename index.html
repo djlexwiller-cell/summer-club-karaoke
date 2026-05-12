@@ -367,6 +367,17 @@ button.innerText = "Lähetetään...";
       .getElementById("selectedSong")
       .style.display = "none";
 
+    selectedSong = null;
+
+renderSongs("");
+
+songsDiv.scrollTop = 0;
+
+window.scrollTo({
+  top:0,
+  behavior:"smooth"
+});
+
     setTimeout(()=>{
 
     button.disabled = false;
@@ -387,8 +398,8 @@ button.innerText = "Lähetä biisitoive";
   }
 }
 
-renderSongs();
-
+});
+  
 </script>
 
 </body>
