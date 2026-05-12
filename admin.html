@@ -183,6 +183,10 @@ button{
       <button class="refresh" onclick="loadRequests()">
         🔄 Refresh Queue
       </button>
+
+      <button class="skip-btn" onclick="endNight()">
+        🧹 End Night
+      </button>
     </div>
 
   </div>
@@ -207,7 +211,14 @@ button{
 // ========================================
 
 const SHEET_CSV_URL =
-"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv";
+"PASTE_GOOGLE_SHEET_CSV_URL_HERE";
+
+// ========================================
+// PASTE APPS SCRIPT URL HERE
+// ========================================
+
+const APPS_SCRIPT_URL =
+"PASTE_APPS_SCRIPT_URL_HERE";
 
 // ========================================
 
@@ -229,9 +240,6 @@ async function loadRequests(){
     requestFeed.innerHTML = "";
 
     rows.forEach((row,index)=>{
-      if(!row || row.trim() === ""){
-      return;
-      }
 
       const cols = row.split(",");
 
@@ -382,6 +390,44 @@ function getDragAfterElement(container,y){
   },{
     offset:Number.NEGATIVE_INFINITY
   }).element;
+}
+
+async function endNight(){
+
+  const confirmAction = confirm(
+    "Arkistoidaanko kaikki requestit ja tyhjennetään queue?"
+  );
+
+  if(!confirmAction){
+    return;
+  }
+
+  try{
+
+    await fetch(APPS_SCRIPT_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body: JSON.stringify({
+        action:"archive"
+      })
+
+    });
+
+    alert("🧹 Queue arkistoitu onnistuneesti");
+
+    setTimeout(()=>{
+      loadRequests();
+    },1500);
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Archivointi epäonnistui");
+  }
 }
 
 loadRequests();
