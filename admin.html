@@ -277,10 +277,10 @@ function sanitize(str){
     const rows =
       text.split("\\n");
 
-    if(rows[1]){
+    if(rows[0]){
 
       const cols =
-        rows[1].split(",");
+        rows[0].split(",");
 
       const pin =
         cols[1]
