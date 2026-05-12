@@ -388,16 +388,18 @@ if(lastRequest){
 
     await fetch(WEBHOOK_URL, {
 
-     localStorage.setItem(
-      "lastRequest",
-      Date.now()
-     );
+  method:"POST",
 
-      method:"POST",
+  mode:"no-cors",
 
-      mode:"no-cors",
+  body:JSON.stringify(payload)
 
-      body:JSON.stringify(payload)
+});
+
+localStorage.setItem(
+  "lastRequest",
+  Date.now()
+);
 
     });
 
