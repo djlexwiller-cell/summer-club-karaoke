@@ -189,6 +189,33 @@ button{
       </button>
     </div>
 
+    <div id="pinDisplay" style="
+  margin-top:20px;
+  background:#1a1a1a;
+  padding:18px;
+  border-radius:18px;
+  text-align:center;
+">
+
+  <div style="
+    color:#999;
+    font-size:14px;
+  ">
+    🎟️ Tonight's PIN
+  </div>
+
+  <div id="currentPin" style="
+    margin-top:10px;
+    font-size:36px;
+    font-weight:bold;
+    color:#7dff9c;
+    letter-spacing:4px;
+  ">
+    LOADING...
+  </div>
+
+</div>
+
   </div>
 </div>
 
@@ -224,6 +251,9 @@ const APPS_SCRIPT_URL =
 
 const requestFeed = document.getElementById("requestFeed");
 
+const PIN_URL =
+"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/gviz/tq?tqx=out:csv&sheet=Pin";
+
 function sanitize(str){
 
   return str
@@ -234,6 +264,40 @@ function sanitize(str){
     .replace(/'/g, "&#039;");
 }
 
+  async function loadPin(){
+
+  try{
+
+    const response =
+      await fetch(PIN_URL);
+
+    const text =
+      await response.text();
+
+    const rows =
+      text.split("\\n");
+
+    if(rows[1]){
+
+      const cols =
+        rows[1].split(",");
+
+      const pin =
+        cols[1]
+          .replace(/\"/g,"")
+          .trim();
+
+      document
+        .getElementById("currentPin")
+        .innerText = pin;
+    }
+
+  }catch(err){
+
+    console.log(err);
+  }
+}
+  
 async function loadRequests(){
 
   try{
