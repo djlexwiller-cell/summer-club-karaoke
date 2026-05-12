@@ -589,7 +589,7 @@ localStorage.setItem(
 } 
 
   const PIN_CSV_URL =
-"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/gviz/tq?tqx=out:csv&sheet=Pin";
+"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
 
 let currentPin = "";
 
@@ -602,16 +602,16 @@ async function loadPin(){
     await response.text();
 
   const rows =
-    text.split("\\n");
+    text.split("\n");
 
-  if(rows[1]){
+  if(rows[0]){
 
     const cols =
-      rows[1].split(",");
+      rows[0].split(",");
 
     currentPin =
       cols[1]
-        .replace(/\"/g,\"\" )
+        .replace(/\"/g,"")
         .trim();
   }
 
