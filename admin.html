@@ -3,210 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lex Willer Admin Panel</title>
-
-<style>
-
-body{
-  margin:0;
-  background:#0f0f0f;
-  color:white;
-  font-family:Arial,sans-serif;
-}
-
-.header{
-  background:#161616;
-  padding:20px;
-  border-bottom:1px solid #2a2a2a;
-}
-
-h1{
-  margin:0;
-  font-size:34px;
-}
-
-.subtitle{
-  color:#999;
-  margin-top:5px;
-}
-
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
-}
-
-.controls{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:20px;
-}
-
-button{
-  background:#ff0088;
-  color:white;
-  border:none;
-  padding:12px 18px;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-button:hover{
-  opacity:0.9;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:15px;
-  margin-top:25px;
-}
-
-.card{
-  background:#1a1a1a;
-  border-radius:18px;
-  padding:20px;
-}
-
-.card-title{
-  color:#aaa;
-  font-size:14px;
-}
-
-.card-value{
-  margin-top:10px;
-  font-size:32px;
-  font-weight:bold;
-}
-
-.queue{
-  margin-top:30px;
-}
-
-.request{
-  background:#1b1b1b;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:15px;
-  border-left:5px solid #ff0088;
-}
-
-.request-top{
-  display:flex;
-  justify-content:space-between;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.song{
-  font-size:24px;
-  font-weight:bold;
-}
-
-.artist{
-  color:#bbb;
-  margin-top:5px;
-}
-
-.name{
-  margin-top:15px;
-  font-weight:bold;
-  color:#7dff9c;
-}
-
-.message{
-  margin-top:12px;
-  background:#252525;
-  padding:12px;
-  border-radius:12px;
-  color:#ddd;
-}
-
-.status{
-  margin-top:15px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.status button{
-  padding:10px 14px;
-  border-radius:10px;
-}
-
-.played{
-  background:#15803d;
-}
-
-.skip{
-  background:#991b1b;
-}
-
-.queuebtn{
-  background:#ca8a04;
-}
-
-.timestamp{
-  color:#888;
-  font-size:13px;
-  margin-top:10px;
-}
-
-iframe{
-  width:100%;
-  height:75vh;
-  border:none;
-  border-radius:18px;
-  background:white;
-  margin-top:25px;
-}
-
-</style>
-</head>
-<body>
-
-<div class="header">
-  <div class="container">
-    <h1>🎧 DJ LEX WILLER ADMIN</h1>
-    <div class="subtitle">
-      Summer Club • Live Requests Dashboard
-    </div>
-
-    <div class="controls">
-      <button onclick="refreshFrame()">
-        🔄 Refresh Queue
-      </button>
-
-      <button onclick="toggleView()">
-        📊 Toggle View
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-
-  <div class="queue" id="sheetView">
-
-    <!--
-      PASTE GOOGLE SHEET SHARE URL BELOW
-
-      Example:
-      https://docs.google.com/spreadsheets/d/XXXX/edit?usp=sharing
-
-      Replace /edit?usp=sharing
-      with:
-      /preview
-    -->
-
-   <!DOCTYPE html>
-<html lang="fi">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lex Willer Admin Panel</title>
+<title>DJ Lex Willer Admin</title>
 
 <style>
 
@@ -221,6 +18,14 @@ body{
   background:#161616;
   padding:16px 20px;
   border-bottom:1px solid #2a2a2a;
+  position:sticky;
+  top:0;
+  z-index:999;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
 }
 
 h1{
@@ -230,70 +35,44 @@ h1{
 
 .subtitle{
   color:#999;
-  margin-top:5px;
-}
-
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
+  margin-top:4px;
 }
 
 .controls{
+  margin-top:15px;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-top:20px;
 }
 
 button{
-  background:#ff0088;
-  color:white;
   border:none;
-  padding:12px 18px;
   border-radius:12px;
-  cursor:pointer;
+  padding:12px 16px;
+  color:white;
   font-weight:bold;
+  cursor:pointer;
 }
 
-button:hover{
-  opacity:0.9;
+.refresh{
+  background:#2563eb;
 }
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:15px;
-  margin-top:25px;
+.refresh:hover{
+  background:#1d4ed8;
 }
 
-.card{
+.request-feed{
+  padding:20px;
+}
+
+.request-card{
   background:#1a1a1a;
   border-radius:18px;
-  padding:20px;
-}
-
-.card-title{
-  color:#aaa;
-  font-size:14px;
-}
-
-.card-value{
-  margin-top:10px;
-  font-size:32px;
-  font-weight:bold;
-}
-
-.queue{
-  margin-top:30px;
-}
-
-.request{
-  background:#1b1b1b;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:15px;
+  padding:18px;
+  margin-bottom:16px;
   border-left:5px solid #ff0088;
+  touch-action:manipulation;
 }
 
 .request-top{
@@ -309,17 +88,17 @@ button:hover{
 }
 
 .artist{
-  color:#bbb;
-  margin-top:5px;
+  margin-top:4px;
+  color:#aaa;
 }
 
-.name{
-  margin-top:15px;
-  font-weight:bold;
+.request-name{
+  margin-top:14px;
   color:#7dff9c;
+  font-weight:bold;
 }
 
-.message{
+.request-message{
   margin-top:12px;
   background:#252525;
   padding:12px;
@@ -327,43 +106,64 @@ button:hover{
   color:#ddd;
 }
 
-.status{
-  margin-top:15px;
+.timestamp{
+  color:#777;
+  font-size:13px;
+}
+
+.status-buttons{
+  margin-top:16px;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
 }
 
-.status button{
-  padding:10px 14px;
-  border-radius:10px;
+.status-btn{
+  opacity:0.4;
+  transition:0.2s;
 }
 
-.played{
-  background:#15803d;
+.status-btn.active{
+  opacity:1;
+  transform:scale(1.03);
 }
 
-.skip{
-  background:#991b1b;
-}
-
-.queuebtn{
+.queue-btn{
   background:#ca8a04;
 }
 
-.timestamp{
-  color:#888;
-  font-size:13px;
-  margin-top:10px;
+.played-btn{
+  background:#15803d;
 }
 
-iframe{
-  width:100%;
-  height:75vh;
-  border:none;
-  border-radius:18px;
-  background:white;
-  margin-top:25px;
+.skip-btn{
+  background:#991b1b;
+}
+
+.dragging{
+  opacity:0.5;
+}
+
+.empty{
+  text-align:center;
+  color:#666;
+  margin-top:50px;
+}
+
+@media(max-width:768px){
+
+  .song{
+    font-size:20px;
+  }
+
+  button{
+    width:100%;
+  }
+
+  .status-buttons button{
+    width:auto;
+    flex:1;
+  }
 }
 
 </style>
@@ -372,110 +172,28 @@ iframe{
 
 <div class="header">
   <div class="container">
+
     <h1>🎧 DJ LEX WILLER ADMIN</h1>
+
     <div class="subtitle">
       Summer Club • Live Requests Dashboard
     </div>
 
     <div class="controls">
-      <button onclick="refreshFrame()">
+      <button class="refresh" onclick="loadRequests()">
         🔄 Refresh Queue
       </button>
-
-      <button onclick="toggleView()">
-        📊 Toggle View
-      </button>
     </div>
 
-    <div class="stats">
-
-      <div class="card">
-        <div class="card-title">Live Status</div>
-        <div class="card-value">🟢 ONLINE</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Mode</div>
-        <div class="card-value">🎉 LIVE</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Requests</div>
-        <div class="card-value">🔥 ACTIVE</div>
-      </div>
-
-    </div>
   </div>
 </div>
 
 <div class="container">
 
-  <div class="queue" id="sheetView">
+  <div class="request-feed" id="requestFeed">
 
-    <div id="requestFeed">
-
-      <div class="request">
-
-        <div class="request-top">
-
-          <div>
-            <div class="song">🎵 Cha Cha Cha</div>
-            <div class="artist">Käärijä</div>
-          </div>
-
-          <div>
-            <div class="timestamp">23:48</div>
-          </div>
-
-        </div>
-
-        <div class="name">
-          👤 Mikko
-        </div>
-
-        <div class="message">
-          📣 Terveiset polttarisankarille 🍻
-        </div>
-
-        <div class="status">
-          <button class="queuebtn">🟡 Jonossa</button>
-          <button class="played">✅ Soitettu</button>
-          <button class="skip">⛔ Skipattu</button>
-        </div>
-
-      </div>
-
-      <div class="request">
-
-        <div class="request-top">
-
-          <div>
-            <div class="song">🎵 Sandstorm</div>
-            <div class="artist">Darude</div>
-          </div>
-
-          <div>
-            <div class="timestamp">23:51</div>
-          </div>
-
-        </div>
-
-        <div class="name">
-          👤 Laura
-        </div>
-
-        <div class="message">
-          📣 Lisää bassoa 🔥
-        </div>
-
-        <div class="status">
-          <button class="queuebtn">🟡 Jonossa</button>
-          <button class="played">✅ Soitettu</button>
-          <button class="skip">⛔ Skipattu</button>
-        </div>
-
-      </div>
-
+    <div class="empty">
+      Loading requests...
     </div>
 
   </div>
@@ -484,71 +202,192 @@ iframe{
 
 <script>
 
-function refreshFrame(){
+// ========================================
+// PASTE GOOGLE SHEET CSV URL HERE
+// ========================================
 
-  const frame = document.getElementById("sheetFrame");
+const SHEET_CSV_URL =
+"PASTE_GOOGLE_SHEET_CSV_URL_Hhttps://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/execERE";
 
-  frame.src = frame.src;
-}
+// ========================================
 
-function toggleView(){
+const requestFeed = document.getElementById("requestFeed");
 
-  const body = document.body;
+async function loadRequests(){
 
-  if(body.style.filter === "invert(1)"){
+  try{
 
-    body.style.filter = "none";
+    const response = await fetch(SHEET_CSV_URL);
 
-  }else{
+    const csv = await response.text();
 
-    body.style.filter = "invert(1)";
+    const rows = csv
+      .split("\n")
+      .slice(1)
+      .filter(row => row.trim() !== "");
+
+    requestFeed.innerHTML = "";
+
+    rows.forEach((row,index)=>{
+
+      const cols = row.split(",");
+
+      const timestamp = cols[0] || "";
+      const name = cols[1] || "Tuntematon";
+      const artist = cols[2] || "";
+      const song = cols[3] || "";
+      const message = cols[4] || "";
+      const status = cols[5] || "Jonossa";
+
+      const card = document.createElement("div");
+
+      card.className = "request-card";
+
+      card.draggable = true;
+
+      card.innerHTML = `
+
+        <div class="request-top">
+
+          <div>
+            <div class="song">🎵 ${song}</div>
+            <div class="artist">${artist}</div>
+          </div>
+
+          <div class="timestamp">
+            ${timestamp}
+          </div>
+
+        </div>
+
+        <div class="request-name">
+          👤 ${name}
+        </div>
+
+        <div class="request-message">
+          📣 ${message || "Ei viestiä"}
+        </div>
+
+        <div class="status-buttons">
+
+          <button
+            class="status-btn queue-btn ${status.includes("Jonossa") ? "active" : ""}"
+            onclick="setStatus(this,'Jonossa')">
+            🟡 Jonossa
+          </button>
+
+          <button
+            class="status-btn played-btn ${status.includes("Soitettu") ? "active" : ""}"
+            onclick="setStatus(this,'Soitettu')">
+            ✅ Soitettu
+          </button>
+
+          <button
+            class="status-btn skip-btn ${status.includes("Skipattu") ? "active" : ""}"
+            onclick="setStatus(this,'Skipattu')">
+            ⛔ Skipattu
+          </button>
+
+        </div>
+
+      `;
+
+      addDragEvents(card);
+
+      requestFeed.appendChild(card);
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+    requestFeed.innerHTML = `
+      <div class="empty">
+        ❌ Requestien lataus epäonnistui
+      </div>
+    `;
   }
 }
 
-setInterval(()=>{
+function setStatus(button,status){
 
-  refreshFrame();
+  const buttons = button.parentElement.querySelectorAll(".status-btn");
 
-},30000);
+  buttons.forEach(btn=>{
+    btn.classList.remove("active");
+  });
 
-</script>
-
-</body>
-</html>
-
-
-  </div>
-
-</div>
-
-<script>
-
-function refreshFrame(){
-
-  const frame = document.getElementById("sheetFrame");
-
-  frame.src = frame.src;
+  button.classList.add("active");
 }
 
-function toggleView(){
+let draggedItem = null;
 
-  const body = document.body;
+function addDragEvents(card){
 
-  if(body.style.filter === "invert(1)"){
+  card.addEventListener("dragstart",()=>{
 
-    body.style.filter = "none";
+    draggedItem = card;
 
-  }else{
+    card.classList.add("dragging");
+  });
 
-    body.style.filter = "invert(1)";
-  }
+  card.addEventListener("dragend",()=>{
+
+    card.classList.remove("dragging");
+  });
+
+  card.addEventListener("dragover",(e)=>{
+
+    e.preventDefault();
+
+    const afterElement = getDragAfterElement(requestFeed,e.clientY);
+
+    if(afterElement == null){
+
+      requestFeed.appendChild(draggedItem);
+
+    }else{
+
+      requestFeed.insertBefore(draggedItem,afterElement);
+    }
+  });
 }
+
+function getDragAfterElement(container,y){
+
+  const draggableElements = [...container.querySelectorAll('.request-card:not(.dragging)')];
+
+  return draggableElements.reduce((closest,child)=>{
+
+    const box = child.getBoundingClientRect();
+
+    const offset = y - box.top - box.height / 2;
+
+    if(offset < 0 && offset > closest.offset){
+
+      return {
+        offset: offset,
+        element: child
+      };
+
+    }else{
+
+      return closest;
+    }
+
+  },{
+    offset:Number.NEGATIVE_INFINITY
+  }).element;
+}
+
+loadRequests();
 
 setInterval(()=>{
 
-  refreshFrame();
+  loadRequests();
 
-},30000);
+},15000);
 
 </script>
 
