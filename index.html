@@ -322,22 +322,21 @@ async function sendRequest(){
 
   const button = document.querySelector("button");
 
-button.disabled = true;
+  button.disabled = true;
 
-button.innerText = "Lähetetään...";
+  button.innerText = "Lähetetään...";
 
   try{
 
-  await fetch(WEBHOOK_URL, {
+    await fetch(WEBHOOK_URL, {
 
-  method:"POST",
+      method:"POST",
 
-  mode:"no-cors",
+      mode:"no-cors",
 
-  body:JSON.stringify(payload)
+      body:JSON.stringify(payload)
 
-});
-
+    });
 
     document
       .getElementById("successBox")
@@ -355,7 +354,9 @@ button.innerText = "Lähetetään...";
       .getElementById("search")
       .value = "";
 
-    selectedSong = null;
+    document
+      .getElementById("selectedSong")
+      .style.display = "none";
 
     document
       .querySelectorAll(".song")
@@ -363,26 +364,22 @@ button.innerText = "Lähetetään...";
         el.classList.remove("selected")
       );
 
-    document
-      .getElementById("selectedSong")
-      .style.display = "none";
-
     selectedSong = null;
 
-renderSongs("");
+    renderSongs("");
 
-songsDiv.scrollTop = 0;
+    songsDiv.scrollTop = 0;
 
-window.scrollTo({
-  top:0,
-  behavior:"smooth"
-});
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
 
     setTimeout(()=>{
 
-    button.disabled = false;
+      button.disabled = false;
 
-button.innerText = "Lähetä biisitoive";
+      button.innerText = "Lähetä biisitoive";
 
       document
         .getElementById("successBox")
@@ -395,10 +392,15 @@ button.innerText = "Lähetä biisitoive";
     console.log(err);
 
     alert("Yhteysvirhe 😢");
+
+    button.disabled = false;
+
+    button.innerText = "Lähetä biisitoive";
   }
 }
-
-});
+  
+renderSongs();
+    
   
 </script>
 
