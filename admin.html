@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lex Willer Admin Panel</title>
+
+<style>
+
+body{
+  margin:0;
+  background:#0f0f0f;
+  color:white;
+  font-family:Arial,sans-serif;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#161616;
+  padding:20px;
+  border-bottom:1px solid #2a2a2a;
+}
+
+h1{
+  margin:0;
+  font-size:34px;
+}
+
+.subtitle{
+  color:#999;
+  margin-top:5px;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+button{
+  background:#ff0088;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+  margin-top:25px;
+}
+
+.card{
+  background:#1a1a1a;
+  border-radius:18px;
+  padding:20px;
+}
+
+.card-title{
+  color:#aaa;
+  font-size:14px;
+}
+
+.card-value{
+  margin-top:10px;
+  font-size:32px;
+  font-weight:bold;
+}
+
+.queue{
+  margin-top:30px;
+}
+
+.request{
+  background:#1b1b1b;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:15px;
+  border-left:5px solid #ff0088;
+}
+
+.request-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.song{
+  font-size:24px;
+  font-weight:bold;
+}
+
+.artist{
+  color:#bbb;
+  margin-top:5px;
+}
+
+.name{
+  margin-top:15px;
+  font-weight:bold;
+  color:#7dff9c;
+}
+
+.message{
+  margin-top:12px;
+  background:#252525;
+  padding:12px;
+  border-radius:12px;
+  color:#ddd;
+}
+
+.status{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.status button{
+  padding:10px 14px;
+  border-radius:10px;
+}
+
+.played{
+  background:#15803d;
+}
+
+.skip{
+  background:#991b1b;
+}
+
+.queuebtn{
+  background:#ca8a04;
+}
+
+.timestamp{
+  color:#888;
+  font-size:13px;
+  margin-top:10px;
+}
+
+iframe{
+  width:100%;
+  height:75vh;
+  border:none;
+  border-radius:18px;
+  background:white;
+  margin-top:25px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="container">
+    <h1>🎧 DJ LEX WILLER ADMIN</h1>
+    <div class="subtitle">
+      Summer Club • Live Requests Dashboard
+    </div>
+
+    <div class="controls">
+      <button onclick="refreshFrame()">
+        🔄 Refresh Queue
+      </button>
+
+      <button onclick="toggleView()">
+        📊 Toggle View
+      </button>
+    </div>
+
+    <div class="stats">
+
+      <div class="card">
+        <div class="card-title">Live Status</div>
+        <div class="card-value">🟢 ONLINE</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Mode</div>
+        <div class="card-value">🎉 LIVE</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Requests</div>
+        <div class="card-value">🔥 ACTIVE</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="queue" id="sheetView">
+
+    <!--
+      PASTE GOOGLE SHEET SHARE URL BELOW
+
+      Example:
+      https://docs.google.com/spreadsheets/d/XXXX/edit?usp=sharing
+
+      Replace /edit?usp=sharing
+      with:
+      /preview
+    -->
+
+    <iframe
+      id="sheetFrame"
+      src="PASTE_GOOGLE_SHEET_PREVIEW_URL_HERE">
+    </iframe>
+
+  </div>
+
+</div>
+
+<script>
+
+function refreshFrame(){
+
+  const frame = document.getElementById("sheetFrame");
+
+  frame.src = frame.src;
+}
+
+function toggleView(){
+
+  const body = document.body;
+
+  if(body.style.filter === "invert(1)"){
+
+    body.style.filter = "none";
+
+  }else{
+
+    body.style.filter = "invert(1)";
+  }
+}
+
+setInterval(()=>{
+
+  refreshFrame();
+
+},30000);
+
+</script>
+
+</body>
+</html>
