@@ -169,15 +169,15 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
 ></textarea>
 
 <button onclick="sendRequest()">
-Lähetä biisitoive
+🎵 Lähetä biisitoive DJ:lle 🎵
 </button>
 
 <div class="success" id="successBox">
-✅ Biisitoive lähetetty!
+🔥 Biisitoive DJ:lle lähetetty 🔥
 </div>
 
 <div class="footer">
-Summer Club Karaoke Requests
+Summer Club Karaoke Kappaleet
 </div>
 
 </div>
@@ -189,7 +189,6 @@ Summer Club Karaoke Requests
 const WEBHOOK_URL =
 "https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
   
-// ========================================
 
 const songsDiv = document.getElementById("songs");
 const searchInput = document.getElementById("search");
@@ -202,9 +201,6 @@ searchInput.addEventListener("input", e => {
 
 });
 
-// ========================================
-// RENDER SONGS
-// ========================================
 
 function renderSongs(filter=""){
 
@@ -293,9 +289,6 @@ function renderSongs(filter=""){
 }
 
 
-// ========================================
-// SEND REQUEST
-// ========================================
 
 async function sendRequest(){
 
@@ -327,6 +320,12 @@ async function sendRequest(){
 
   };
 
+  const button = document.querySelector("button");
+
+button.disabled = true;
+
+button.innerText = "Lähetetään...";
+
   try{
 
   await fetch(WEBHOOK_URL, {
@@ -339,9 +338,6 @@ async function sendRequest(){
 
 });
 
-console.log("FETCH SUORITETTU");
-
-alert("FETCH SUORITETTU");
 
     document
       .getElementById("successBox")
@@ -369,6 +365,10 @@ alert("FETCH SUORITETTU");
 
     setTimeout(()=>{
 
+    button.disabled = false;
+
+button.innerText = "Lähetä biisitoive";
+
       document
         .getElementById("successBox")
         .style.display = "none";
@@ -382,8 +382,6 @@ alert("FETCH SUORITETTU");
     alert("Yhteysvirhe 😢");
   }
 }
-
-// ========================================
 
 renderSongs();
 
