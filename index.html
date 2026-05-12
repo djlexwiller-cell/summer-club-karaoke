@@ -196,6 +196,12 @@ const searchInput = document.getElementById("search");
 
 let selectedSong = null;
 
+searchInput.addEventListener("input", e => {
+
+  renderSongs(e.target.value);
+
+});
+
 // ========================================
 // RENDER SONGS
 // ========================================
