@@ -393,7 +393,7 @@ async function sendRequest(){
 
   try{
 
-    await fetch(WEBHOOK_URL, {
+  await fetch(WEBHOOK_URL, {
 
   method:"POST",
 
@@ -402,6 +402,10 @@ async function sendRequest(){
   body:JSON.stringify(payload)
 
 });
+
+console.log("FETCH SUORITETTU");
+
+alert("FETCH SUORITETTU");
 
     document
       .getElementById("successBox")
