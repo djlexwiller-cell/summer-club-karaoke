@@ -184,6 +184,35 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
 🎵 Lähetä biisitoive DJ:lle 🎵
 </button>
 
+ <button onclick="toggleSuggestionBox()" class="suggest-btn">
+➕ Ehdota uutta bilekaraokebiisiä
+</button>
+
+<div id="suggestionBox" style="display:none; margin-top:20px;">
+
+  <input
+    type="text"
+    id="suggestArtist"
+    placeholder="Artisti"
+  />
+
+  <input
+    type="text"
+    id="suggestSong"
+    placeholder="Kappale"
+  />
+
+  <textarea
+    id="suggestMessage"
+    placeholder="Miksi tämä pitäisi lisätä? 😄"
+  ></textarea>
+
+  <button onclick="sendSuggestion()">
+    🔥 Lähetä ehdotus
+  </button>
+
+</div>
+
 <div class="success" id="successBox">
 🔥 Biisitoive DJ:lle lähetetty 🔥
 </div>
@@ -410,6 +439,77 @@ async function sendRequest(){
     button.innerText = "Lähetä biisitoive";
   }
 }
+
+function toggleSuggestionBox(){
+
+  const box =
+    document.getElementById("suggestionBox");
+
+  if(box.style.display === "none"){
+
+    box.style.display = "block";
+
+  }else{
+
+    box.style.display = "none";
+  }
+}
+
+async function sendSuggestion(){
+
+  const artist =
+    document.getElementById("suggestArtist").value;
+
+  const song =
+    document.getElementById("suggestSong").value;
+
+  const message =
+    document.getElementById("suggestMessage").value;
+
+  if(artist.trim() === "" || song.trim() === ""){
+
+    alert("Täytä artisti ja kappale 🎵");
+
+    return;
+  }
+
+  try{
+
+    await fetch(WEBHOOK_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body:JSON.stringify({
+
+        action:"suggestion",
+
+        artist:artist,
+
+        song:song,
+
+        message:message
+
+      })
+
+    });
+
+    alert("🔥 Biisiehdotus lähetetty!");
+
+    document.getElementById("suggestArtist").value = "";
+    document.getElementById("suggestSong").value = "";
+    document.getElementById("suggestMessage").value = "";
+
+    document.getElementById("suggestionBox").style.display = "none";
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Lähetys epäonnistui");
+  }
+} 
   
 renderSongs();
     
