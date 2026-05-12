@@ -196,59 +196,9 @@ const WEBHOOK_URL =
 // Lisää myöhemmin koko lista tähän
 // ========================================
 
-const songs = [
+<script src="songs.js"></script>
 
-{
-  artist:"Backstreet Boys",
-  song:"Everybody (Backstreet's Back)"
-},
-
-{
-  artist:"Backstreet Boys",
-  song:"I Want It That Way"
-},
-
-{
-  artist:"Britney Spears",
-  song:"Toxic"
-},
-
-{
-  artist:"Bon Jovi",
-  song:"Livin' On A Prayer"
-},
-
-{
-  artist:"DJ Ötzi",
-  song:"Hey Baby"
-},
-
-{
-  artist:"Käärijä",
-  song:"Cha Cha Cha"
-},
-
-{
-  artist:"Queen",
-  song:"Don't Stop Me Now"
-},
-
-{
-  artist:"Eminem",
-  song:"Without Me"
-},
-
-{
-  artist:"Lady Gaga",
-  song:"Poker Face"
-},
-
-{
-  artist:"Whitney Houston",
-  song:"I Wanna Dance With Somebody"
-}
-
-];
+<script>
 
 // ========================================
 
@@ -347,15 +297,7 @@ function renderSongs(filter=""){
   });
 }
 
-// ========================================
-// SEARCH
-// ========================================
-
-searchInput.addEventListener("input", e => {
-
-  renderSongs(e.target.value);
-
-});
+</script>
 
 // ========================================
 // SEND REQUEST
