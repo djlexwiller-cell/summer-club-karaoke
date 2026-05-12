@@ -1,182 +1,449 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Summer Club Karaoke Lista</title>
 
-  <style>
-    body{
-      background:#111;
-      color:white;
-      font-family:Arial;
-      max-width:700px;
-      margin:auto;
-      padding:20px;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    h1{
-      font-size:40px;
-    }
+<title>Summer Club Karaoke Lista</title>
 
-    input, textarea{
-      width:100%;
-      padding:15px;
-      margin-top:10px;
-      border-radius:10px;
-      border:none;
-      background:#222;
-      color:white;
-    }
+<style>
 
-    button{
-      margin-top:15px;
-      padding:15px;
-      width:100%;
-      border:none;
-      border-radius:10px;
-      background:#ff0088;
-      color:white;
-      font-size:18px;
-      cursor:pointer;
-    }
+body{
+  background:#111;
+  color:white;
+  font-family:Arial, sans-serif;
+  margin:0;
+  padding:20px;
+}
 
-    .song{
-      background:#1b1b1b;
-      padding:15px;
-      margin-top:10px;
-      border-radius:12px;
-      cursor:pointer;
-    }
+.container{
+  max-width:800px;
+  margin:auto;
+}
 
-    .song:hover{
-      background:#2b2b2b;
-    }
+h1{
+  font-size:42px;
+  margin-bottom:10px;
+}
 
-    .selected{
-      border:2px solid #ff0088;
-    }
-  </style>
+.subtitle{
+  color:#aaa;
+  margin-bottom:25px;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#1e1e1e;
+  color:white;
+  margin-top:10px;
+  box-sizing:border-box;
+  font-size:16px;
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+button{
+  width:100%;
+  padding:18px;
+  margin-top:20px;
+  border:none;
+  border-radius:12px;
+  background:#ff0088;
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.01);
+  background:#ff1493;
+}
+
+#songs{
+  margin-top:20px;
+  max-height:500px;
+  overflow-y:auto;
+  padding-right:5px;
+}
+
+.song{
+  background:#1b1b1b;
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:0.2s;
+  border:2px solid transparent;
+}
+
+.song:hover{
+  background:#252525;
+}
+
+.song.selected{
+  border:2px solid #ff0088;
+  background:#2a1a24;
+}
+
+.song-title{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.song-artist{
+  color:#999;
+  margin-top:5px;
+}
+
+#selectedSong{
+  margin-top:20px;
+  padding:16px;
+  background:#1b1b1b;
+  border-radius:14px;
+  display:none;
+}
+
+.success{
+  margin-top:20px;
+  background:#16351f;
+  color:#7dff9c;
+  padding:15px;
+  border-radius:12px;
+  display:none;
+}
+
+.footer{
+  margin-top:40px;
+  color:#666;
+  font-size:14px;
+  text-align:center;
+}
+
+</style>
+
 </head>
+
 <body>
+
+<div class="container">
 
 <h1>🎤 Summer Club Karaoke Lista</h1>
 
-<p>Hae kappale tai artisti ja lähetä biisitoive DJ:lle.</p>
+<div class="subtitle">
+Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
+</div>
 
-<input id="search" placeholder="Hae biisiä tai artistia...">
+<input
+  type="text"
+  id="search"
+  placeholder="Hae artistia tai kappaletta..."
+/>
+
+<div id="selectedSong"></div>
 
 <div id="songs"></div>
 
-<h2>🙋 Toivojan nimi</h2>
-<input id="name" placeholder="Esim. Mikko">
+<h2>🙋 Oma nimi</h2>
+
+<input
+  type="text"
+  id="name"
+  placeholder="Kirjoita nimesi..."
+/>
 
 <h2>📣 Terveiset DJ:lle</h2>
-<textarea id="message" placeholder="Shoutoutit, synttärit, terveiset..."></textarea>
 
-<button onclick="sendRequest()">Lähetä biisitoive</button>
+<textarea
+  id="message"
+  placeholder="Shoutoutit, synttärit, terveiset..."
+></textarea>
+
+<button onclick="sendRequest()">
+Lähetä biisitoive
+</button>
+
+<div class="success" id="successBox">
+✅ Biisitoive lähetetty!
+</div>
+
+<div class="footer">
+Summer Club Karaoke Requests
+</div>
+
+</div>
 
 <script>
 
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
+// ========================================
+// PASTE GOOGLE APPS SCRIPT URL TÄHÄN
+// ========================================
+
+const WEBHOOK_URL =
+"https://PASTE_SCRIPT_URL_TÄHÄN";
+
+// ========================================
+// BIISILISTA
+// Lisää myöhemmin koko lista tähän
+// ========================================
 
 const songs = [
-  {
-    artist:"Backstreet Boys",
-    song:"Everybody"
-  },
-  {
-    artist:"Britney Spears",
-    song:"Toxic"
-  },
-  {
-    artist:"DJ Ötzi",
-    song:"Hey Baby"
-  },
-  {
-    artist:"Käärijä",
-    song:"Cha Cha Cha"
-  },
-  {
-    artist:"Queen",
-    song:"Don't Stop Me Now"
-  }
+
+{
+  artist:"Backstreet Boys",
+  song:"Everybody (Backstreet's Back)"
+},
+
+{
+  artist:"Backstreet Boys",
+  song:"I Want It That Way"
+},
+
+{
+  artist:"Britney Spears",
+  song:"Toxic"
+},
+
+{
+  artist:"Bon Jovi",
+  song:"Livin' On A Prayer"
+},
+
+{
+  artist:"DJ Ötzi",
+  song:"Hey Baby"
+},
+
+{
+  artist:"Käärijä",
+  song:"Cha Cha Cha"
+},
+
+{
+  artist:"Queen",
+  song:"Don't Stop Me Now"
+},
+
+{
+  artist:"Eminem",
+  song:"Without Me"
+},
+
+{
+  artist:"Lady Gaga",
+  song:"Poker Face"
+},
+
+{
+  artist:"Whitney Houston",
+  song:"I Wanna Dance With Somebody"
+}
+
 ];
 
-let selectedSong = null;
+// ========================================
 
 const songsDiv = document.getElementById("songs");
 const searchInput = document.getElementById("search");
+
+let selectedSong = null;
+
+// ========================================
+// RENDER SONGS
+// ========================================
 
 function renderSongs(filter=""){
 
   songsDiv.innerHTML = "";
 
-  songs
+  const filtered = songs
     .filter(item =>
-      item.artist.toLowerCase().includes(filter.toLowerCase()) ||
-      item.song.toLowerCase().includes(filter.toLowerCase())
+
+      item.artist
+        .toLowerCase()
+        .includes(filter.toLowerCase())
+
+      ||
+
+      item.song
+        .toLowerCase()
+        .includes(filter.toLowerCase())
     )
-    .forEach(item => {
 
-      const div = document.createElement("div");
+    .sort((a,b)=>
+      a.artist.localeCompare(b.artist)
+    );
 
-      div.className = "song";
+  if(filtered.length === 0){
 
-      div.innerHTML = `
-        <strong>${item.song}</strong><br>
+    songsDiv.innerHTML = `
+      <div class="song">
+        Ei hakutuloksia 😢
+      </div>
+    `;
+
+    return;
+  }
+
+  filtered.forEach(item => {
+
+    const div = document.createElement("div");
+
+    div.className = "song";
+
+    div.innerHTML = `
+      <div class="song-title">
+        ${item.song}
+      </div>
+
+      <div class="song-artist">
         ${item.artist}
-      `;
+      </div>
+    `;
 
-      div.onclick = () => {
+    div.onclick = () => {
 
-        selectedSong = item;
+      selectedSong = item;
 
-        document
-          .querySelectorAll(".song")
-          .forEach(el => el.classList.remove("selected"));
+      document
+        .querySelectorAll(".song")
+        .forEach(el =>
+          el.classList.remove("selected")
+        );
 
-        div.classList.add("selected");
-      };
+      div.classList.add("selected");
 
-      songsDiv.appendChild(div);
-    });
+      document
+        .getElementById("selectedSong")
+        .style.display = "block";
+
+      document
+        .getElementById("selectedSong")
+        .innerHTML = `
+          <strong>🎵 Valittu biisi:</strong><br><br>
+          ${item.song}<br>
+          <span style="color:#999;">
+            ${item.artist}
+          </span>
+        `;
+
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+    };
+
+    songsDiv.appendChild(div);
+
+  });
 }
 
+// ========================================
+// SEARCH
+// ========================================
+
 searchInput.addEventListener("input", e => {
+
   renderSongs(e.target.value);
+
 });
 
-renderSongs();
+// ========================================
+// SEND REQUEST
+// ========================================
 
 async function sendRequest(){
 
   if(!selectedSong){
-    alert("Valitse kappale");
+
+    alert("Valitse kappale 🎵");
+    return;
+  }
+
+  const name =
+    document.getElementById("name").value;
+
+  if(name.trim() === ""){
+
+    alert("Kirjoita oma nimi 🙋");
     return;
   }
 
   const payload = {
-    name: document.getElementById("name").value,
-    artist: selectedSong.artist,
-    song: selectedSong.song,
-    message: document.getElementById("message").value
+
+    name:name,
+
+    artist:selectedSong.artist,
+
+    song:selectedSong.song,
+
+    message:
+      document.getElementById("message").value
+
   };
 
   try{
 
     await fetch(WEBHOOK_URL,{
+
       method:"POST",
+
       body:JSON.stringify(payload)
+
     });
 
-    alert("Biisitoive lähetetty 🔥");
+    document
+      .getElementById("successBox")
+      .style.display = "block";
+
+    document
+      .getElementById("name")
+      .value = "";
+
+    document
+      .getElementById("message")
+      .value = "";
+
+    selectedSong = null;
+
+    document
+      .querySelectorAll(".song")
+      .forEach(el =>
+        el.classList.remove("selected")
+      );
+
+    document
+      .getElementById("selectedSong")
+      .style.display = "none";
+
+    setTimeout(()=>{
+
+      document
+        .getElementById("successBox")
+        .style.display = "none";
+
+    },3000);
 
   }catch(err){
 
-    alert("Virhe lähetyksessä");
+    alert("Virhe lähetyksessä 😢");
+
+    console.error(err);
   }
 }
+
+// ========================================
+
+renderSongs();
 
 </script>
 
