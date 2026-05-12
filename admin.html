@@ -224,6 +224,16 @@ const APPS_SCRIPT_URL =
 
 const requestFeed = document.getElementById("requestFeed");
 
+function sanitize(str){
+
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 async function loadRequests(){
 
   try{
@@ -261,8 +271,8 @@ async function loadRequests(){
         <div class="request-top">
 
           <div>
-            <div class="song">🎵 ${song}</div>
-            <div class="artist">${artist}</div>
+            <div class="song">🎵 ${sanitize(song)}</div>
+            <div class="artist">${sanitize(artist)}</div>
           </div>
 
           <div class="timestamp">
@@ -272,11 +282,11 @@ async function loadRequests(){
         </div>
 
         <div class="request-name">
-          👤 ${name}
+          👤 ${sanitize(name)}
         </div>
 
         <div class="request-message">
-          📣 ${message || "Ei viestiä"}
+          📣 ${sanitize(message || "Ei viestiä")}
         </div>
 
         <div class="status-buttons">
