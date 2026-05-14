@@ -403,11 +403,45 @@ function openScreen(screenId){
 
 function goHome(){
 
+  // HIDE ALL
+
   hideAllScreens();
 
   document
     .getElementById('homeScreen')
     .classList.add('active');
+
+  // CLEAR REQUEST FORM
+
+  document.getElementById("name").value = "";
+  document.getElementById("message").value = "";
+
+  // CLEAR SONG SEARCH
+
+  document.getElementById("search").value = "";
+
+  // CLEAR SUGGESTION FORM
+
+  document.getElementById("suggestArtist").value = "";
+  document.getElementById("suggestSong").value = "";
+  document.getElementById("suggestMessage").value = "";
+
+  // CLEAR DJ MESSAGE FORM
+
+  document.getElementById("djMessageName").value = "";
+  document.getElementById("djMessageText").value = "";
+
+  // RESET SONG LIST
+
+  renderSongs("");
+
+  // RESET SELECTED SONG
+
+  selectedSong = null;
+
+  document
+    .getElementById("selectedSong")
+    .innerHTML = "";
 }
 
 function backToSongs(){
