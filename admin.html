@@ -328,52 +328,60 @@ async function loadRequests(){
 
       card.draggable = true;
 
-      card.innerHTML = `
+    card.innerHTML = `
 
-        <div class="request-top">
+  <div class="request-top">
 
-          <div>
-            <div class="song">🎵 ${sanitize(song)}</div>
-            <div class="artist">${sanitize(artist)}</div>
-          </div>
+    <div>
+      <div class="song">
+        🎵 ${sanitize(song)}
+      </div>
 
-          <div class="timestamp">
-            ${timestamp}
-          </div>
+      <div class="artist">
+        ${sanitize(artist)}
+      </div>
+    </div>
 
-        </div>
+    <div class="timestamp">
+      ${timestamp}
+    </div>
 
-        <div class="request-name">
-          👤 ${sanitize(name)}
-        </div>
+  </div>
 
-        <div class="request-message">
-          📣 ${sanitize(message || "Ei viestiä")}
-        </div>
+  <div class="request-name">
+    👤 ${sanitize(name)}
+  </div>
 
-        <div class="status-buttons">
+  <div class="request-message">
+    📣 ${sanitize(message || "Ei viestiä")}
+  </div>
 
-          <button
-            class="status-btn queue-btn ${status.includes("Jonossa") ? "active" : ""}"
-            onclick="setStatus(this,'Jonossa',${actualRow})"
-            🟡 Jonossa
-          </button>
+  <div class="status-buttons">
 
-          <button
-            class="status-btn played-btn ${status.includes("Soitettu") ? "active" : ""}"
-            onclick="setStatus(this,'Soitettu',${actualRow})"
-            ✅ Soitettu
-          </button>
+    <button
+      class="status-btn queue-btn ${status.includes("Jonossa") ? "active" : ""}"
+      onclick="setStatus(this,'Jonossa',${actualRow})"
+    >
+      🟡 Jonossa
+    </button>
 
-          <button
-            class="status-btn skip-btn ${status.includes("Skipattu") ? "active" : ""}"
-            onclick="setStatus(this,'Skipattu',${actualRow})"
-            ⛔ Skipattu
-          </button>
+    <button
+      class="status-btn played-btn ${status.includes("Soitettu") ? "active" : ""}"
+      onclick="setStatus(this,'Soitettu',${actualRow})"
+    >
+      ✅ Soitettu
+    </button>
 
-        </div>
+    <button
+      class="status-btn skip-btn ${status.includes("Skipattu") ? "active" : ""}"
+      onclick="setStatus(this,'Skipattu',${actualRow})"
+    >
+      ⛔ Skipattu
+    </button>
 
-      `;
+  </div>
+
+`;
 
       addDragEvents(card);
 
