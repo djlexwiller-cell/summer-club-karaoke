@@ -388,6 +388,10 @@ const PIN_CSV_URL =
 const MESSAGE_SETTINGS_URL =
   "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1934620115";
 
+// Direct Google Apps Script calls usually need this as false.
+// Set true if WEBHOOK_URL points to a CORS-capable proxy, for example Cloudflare Worker.
+const API_USES_READABLE_JSON = false;
+
 const COOLDOWN_SECONDS = 30;
 
 const songsDiv = document.getElementById("songs");
@@ -518,11 +522,34 @@ function requireCooldown(label){
 }
 
 async function postToAppsScript(payload){
-  await fetch(WEBHOOK_URL, {
+  const body = JSON.stringify(payload);
+
+  if(!API_USES_READABLE_JSON){
+    await fetch(WEBHOOK_URL, {
+      method:"POST",
+      mode:"no-cors",
+      body
+    });
+
+    return { success:true, opaque:true };
+  }
+
+  const response = await fetch(WEBHOOK_URL, {
     method:"POST",
-    mode:"no-cors",
-    body:JSON.stringify(payload)
+    mode:"cors",
+    headers:{
+      "Content-Type":"text/plain;charset=utf-8"
+    },
+    body
   });
+
+  const result = await response.json();
+
+  if(!result.success){
+    throw new Error(result.error || "Lähetys epäonnistui.");
+  }
+
+  return result;
 }
 
 async function runSubmit(button, loadingText, doneText, action){
