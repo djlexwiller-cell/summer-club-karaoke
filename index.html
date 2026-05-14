@@ -903,11 +903,12 @@ async function loadSettings(){
 
       if(enabled !== "ON"){
 
-        document
-          .querySelector(
-            'button[onclick=\"openScreen(\\'messageScreen\\')\"]'
-          )
-          .style.display = "none";
+        const messageButton =
+        document.querySelectorAll("button")[2];
+
+      if(messageButton){
+
+        messageButton.style.display = "none";
       }
     }
 
