@@ -250,7 +250,10 @@ const APPS_SCRIPT_URL =
 // ========================================
 
 const requestFeed = document.getElementById("requestFeed");
-    let hiddenRows = [];
+    let hiddenRows =
+    JSON.parse(
+    localStorage.getItem("hiddenRows") || "[]"
+  );
 
 const PIN_URL =
 "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
@@ -555,6 +558,11 @@ function getDragAfterElement(container,y){
   }
 
   hiddenRows.push(row);
+
+  localStorage.setItem(
+  "hiddenRows",
+  JSON.stringify(hiddenRows)
+);
 
   const card =
     event.target.closest(".request-card");
