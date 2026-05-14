@@ -1,0 +1,7 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "summer-club-karaoke",
+  "main": "cloudflare-worker-proxy.js",
+  "compatibility_date": "2026-05-14",
+  "workers_dev": true
+}
