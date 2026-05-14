@@ -300,7 +300,8 @@ async function loadRequests(){
 
   try{
 
-    const response = await fetch(SHEET_CSV_URL);
+    const SHEET_CSV_URL =
+    "https://docs.google.com/spreadsheets/d/XXXX/export?format=tsv";
 
     const csv = await response.text();
 
@@ -315,7 +316,7 @@ async function loadRequests(){
 
      const actualRow = index + 2;
 
-    const cols = row.split(",");
+    const cols = row.split("\t");
 
     const timestamp =
       (cols[0] || "")
