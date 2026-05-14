@@ -343,7 +343,7 @@ button:hover{
   ← Takaisin
 </button>
 
-<h1>💬 Lähetä DJ:lle viesti</h1>
+<h1>💬 Lähetä DJ:lle DM</h1>
 
 <input
   type="text"
@@ -951,8 +951,8 @@ loadPin();
           .trim()
           .toUpperCase();
 
-      const messageButton =
-        document.querySelectorAll("button")[2];
+     const messageButton =
+        document.getElementById("messageScreenButton");
 
       if(messageButton){
 
