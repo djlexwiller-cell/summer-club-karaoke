@@ -689,6 +689,12 @@ loadPin();
  function backToSongs(){
 
   document
+    .getElementById("search")
+    .value = "";
+
+  renderSongs("");
+
+  document
     .getElementById("requestScreen")
     .style.display = "none";
 
