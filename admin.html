@@ -312,6 +312,7 @@ async function loadRequests(){
 
     rows.forEach((row,index)=>{
 
+      const actualRow = index + 2;
       const cols = row.split(",");
 
       const timestamp = cols[0] || "";
@@ -354,19 +355,19 @@ async function loadRequests(){
 
           <button
             class="status-btn queue-btn ${status.includes("Jonossa") ? "active" : ""}"
-            onclick="setStatus(this,'Jonossa')">
+            onclick="setStatus(this,'Jonossa',${actualRow})"
             🟡 Jonossa
           </button>
 
           <button
             class="status-btn played-btn ${status.includes("Soitettu") ? "active" : ""}"
-            onclick="setStatus(this,'Soitettu')">
+            onclick="setStatus(this,'Soitettu',${actualRow})"
             ✅ Soitettu
           </button>
 
           <button
             class="status-btn skip-btn ${status.includes("Skipattu") ? "active" : ""}"
-            onclick="setStatus(this,'Skipattu')">
+            onclick="setStatus(this,'Skipattu',${actualRow})"
             ⛔ Skipattu
           </button>
 
@@ -392,15 +393,45 @@ async function loadRequests(){
   }
 }
 
-function setStatus(button,status){
+async function setStatus(button,status,row){
 
-  const buttons = button.parentElement.querySelectorAll(".status-btn");
+  const buttons =
+    button.parentElement.querySelectorAll(".status-btn");
 
   buttons.forEach(btn=>{
     btn.classList.remove("active");
   });
 
   button.classList.add("active");
+
+  try{
+
+    await fetch(APPS_SCRIPT_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body: JSON.stringify({
+
+        action:"status",
+
+        secret:"LEXWILLER2025",
+
+        row:row,
+
+        status:status
+
+      })
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Status päivitys epäonnistui");
+  }
 }
 
 let draggedItem = null;
