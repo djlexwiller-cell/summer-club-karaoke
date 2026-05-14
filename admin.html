@@ -193,11 +193,17 @@ h1{
 .status-buttons{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
+  gap:8px;
   margin-top:15px;
 }
 
 .status-btn{
+  min-height:36px;
+  padding:8px 11px;
+  border-radius:7px;
+  font-size:14px;
+  line-height:1;
+  white-space:nowrap;
   opacity:0.55;
 }
 
@@ -225,9 +231,24 @@ h1{
     white-space:normal;
   }
 
-  .status-buttons button,
   .controls button{
     flex:1 1 160px;
+  }
+
+  .status-buttons{
+    flex-wrap:nowrap;
+    gap:6px;
+  }
+
+  .status-buttons button{
+    flex:1 1 0;
+    min-width:0;
+  }
+
+  .status-btn{
+    min-height:32px;
+    padding:7px 6px;
+    font-size:12px;
   }
 
   .song{
