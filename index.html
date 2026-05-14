@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="fi">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Summer Club Karaoke</title>
+<title>Summer Club Karaoke V3</title>
 
 <style>
 
@@ -69,6 +70,7 @@ button{
   font-size:18px;
   font-weight:bold;
   cursor:pointer;
+  transition:0.2s;
 }
 
 button:hover{
@@ -81,6 +83,10 @@ button:hover{
 
 .screen.active{
   display:block;
+}
+
+.back-btn{
+  background:#272727;
 }
 
 #songs{
@@ -135,10 +141,6 @@ button:hover{
   text-align:center;
 }
 
-.back-btn{
-  background:#272727;
-}
-
 #pinScreen{
   position:fixed;
   inset:0;
@@ -152,6 +154,7 @@ button:hover{
 }
 
 </style>
+
 </head>
 <body>
 
@@ -159,12 +162,12 @@ button:hover{
 
   <h1>🎟️ Syötä tämän illan bilekoodi</h1>
 
-  <input
-    type="text"
-    id="pinInput"
-    placeholder="Esim. CLUB482"
-    style="max-width:300px;text-align:center;font-size:22px;"
-  />
+<input
+ type="text"
+ id="pinInput"
+ placeholder="Esim. CLUB42"
+ style="max-width:300px;text-align:center;font-size:22px;"
+/>
 
   <button onclick="checkPin()" style="max-width:300px;">
     🔓 Avaa bilekaraoke
@@ -175,136 +178,151 @@ button:hover{
 <div class="container">
 
   <!-- HOME -->
+
   <div id="homeScreen" class="screen active">
 
-    <h1>🎤 Summer Club Karaoke</h1>
+```
+<h1>🎤 Summer Club Karaoke</h1>
 
-    <div class="subtitle">
-      Valitse mitä haluat tehdä 😄🔥
-    </div>
+<div class="subtitle">
+  Valitse mitä haluat tehdä 😄🔥
+</div>
 
-    <button onclick="openScreen('songScreen')">
-      🎵 Tee biisitoive
-    </button>
+<button onclick="openScreen('songScreen')">
+  🎵 Tee biisitoive
+</button>
 
-    <button onclick="openScreen('suggestionScreen')">
-      ➕ Ehdota biisiä
-    </button>
+<button onclick="openScreen('suggestionScreen')">
+  ➕ Ehdota biisiä
+</button>
 
-    <button onclick="openScreen('messageScreen')">
-      💬 Lähetä DJ:lle viesti
-    </button>
+<button onclick="openScreen('messageScreen')">
+  💬 Lähetä DJ:lle viesti
+</button>
+```
 
   </div>
 
   <!-- SONG SEARCH -->
+
   <div id="songScreen" class="screen">
 
-    <button class="back-btn" onclick="goHome()">
-      ← Takaisin
-    </button>
+```
+<button class="back-btn" onclick="goHome()">
+  ← Takaisin
+</button>
 
-    <h1>🎵 Tee biisitoive</h1>
+<h1>🎵 Tee biisitoive</h1>
 
-    <input
-      type="text"
-      id="search"
-      placeholder="Hae artistia tai kappaletta..."
-    />
+<input
+  type="text"
+  id="search"
+  placeholder="Hae artistia tai kappaletta..."
+/>
 
-    <div id="songs"></div>
+<div id="songs"></div>
+```
 
   </div>
 
   <!-- REQUEST -->
+
   <div id="requestScreen" class="screen">
 
-    <button class="back-btn" onclick="backToSongs()">
-      ← Vaihda biisi
-    </button>
+```
+<button class="back-btn" onclick="backToSongs()">
+  ← Vaihda biisi
+</button>
 
-    <div id="selectedSong" class="selected-song"></div>
+<div id="selectedSong" class="selected-song"></div>
 
-    <h2>🙋 Oma nimi</h2>
+<h2>🙋 Oma nimi</h2>
 
-    <input
-      type="text"
-      id="name"
-      placeholder="Kirjoita nimesi..."
-    />
+<input
+  type="text"
+  id="name"
+  placeholder="Kirjoita nimesi..."
+/>
 
-    <h2>📣 Terveiset DJ:lle</h2>
+<h2>📣 Terveiset DJ:lle</h2>
 
-    <textarea
-      id="message"
-      placeholder="Shoutoutit, synttärit, terveiset..."
-    ></textarea>
+<textarea
+  id="message"
+  placeholder="Shoutoutit, synttärit, terveiset..."
+></textarea>
 
-    <button onclick="sendRequest()">
-      🎵 Lähetä biisitoive DJ:lle 🎵
-    </button>
+<button onclick="sendRequest(event)">
+  🎵 Lähetä biisitoive DJ:lle 🎵
+</button>
 
-    <div class="success" id="successBox">
-      🔥 Biisitoive lähetetty!
-    </div>
+<div class="success" id="successBox">
+  🔥 Biisitoive lähetetty!
+</div>
+```
 
   </div>
 
   <!-- SUGGESTION -->
+
   <div id="suggestionScreen" class="screen">
 
-    <button class="back-btn" onclick="goHome()">
-      ← Takaisin
-    </button>
+```
+<button class="back-btn" onclick="goHome()">
+  ← Takaisin
+</button>
 
-    <h1>➕ Ehdota biisiä</h1>
+<h1>➕ Ehdota biisiä</h1>
 
-    <input
-      type="text"
-      id="suggestArtist"
-      placeholder="Artisti"
-    />
+<input
+  type="text"
+  id="suggestArtist"
+  placeholder="Artisti"
+/>
 
-    <input
-      type="text"
-      id="suggestSong"
-      placeholder="Kappale"
-    />
+<input
+  type="text"
+  id="suggestSong"
+  placeholder="Kappale"
+/>
 
-    <textarea
-      id="suggestMessage"
-      placeholder="Miksi tämä pitäisi lisätä? 😄"
-    ></textarea>
+<textarea
+  id="suggestMessage"
+  placeholder="Miksi tämä pitäisi lisätä? 😄"
+></textarea>
 
-    <button onclick="sendSuggestion()">
-      🔥 Lähetä ehdotus
-    </button>
+<button onclick="sendSuggestion(event)">
+  🔥 Lähetä ehdotus
+</button>
+```
 
   </div>
 
   <!-- DJ MESSAGE -->
+
   <div id="messageScreen" class="screen">
 
-    <button class="back-btn" onclick="goHome()">
-      ← Takaisin
-    </button>
+```
+<button class="back-btn" onclick="goHome()">
+  ← Takaisin
+</button>
 
-    <h1>💬 Lähetä DJ:lle viesti</h1>
+<h1>💬 Lähetä DJ:lle viesti</h1>
 
-    <input
-      type="text"
-      id="djMessageName"
-      placeholder="Nimi (optional)"
-    />
+<input
+  type="text"
+  id="djMessageName"
+  placeholder="Nimi (optional)"
+/>
 
-    <textarea
-      id="djMessageText"
-      placeholder="Kirjoita viesti DJ:lle 😄"
-    ></textarea>
+<textarea
+  id="djMessageText"
+  placeholder="Kirjoita viesti DJ:lle 😄"
+></textarea>
 
-    <button onclick="sendDJMessage()">
-      📣 Lähetä viesti
-    </button>
+<button onclick="sendDJMessage(event)">
+  📣 Lähetä viesti
+</button>
+```
 
   </div>
 
@@ -315,10 +333,14 @@ button:hover{
 </div>
 
 <script src="songs.js"></script>
+
 <script>
 
-const WEBHOOK_URL ="https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
-const PIN_CSV_URL ="https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
+const WEBHOOK_URL =
+"https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
+
+const PIN_CSV_URL =
+"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
 
 const songsDiv = document.getElementById("songs");
 const searchInput = document.getElementById("search");
@@ -359,12 +381,16 @@ function backToSongs(){
   openScreen('songScreen');
 
   setTimeout(()=>{
+
     songsDiv.scrollTop = savedScrollPosition;
+
   },50);
 }
 
 searchInput.addEventListener("input", e => {
+
   renderSongs(e.target.value);
+
 });
 
 function renderSongs(filter=""){
@@ -379,6 +405,17 @@ function renderSongs(filter=""){
     .sort((a,b)=>
       a.artist.localeCompare(b.artist)
     );
+
+  if(filtered.length === 0){
+
+    songsDiv.innerHTML = `
+      <div class="song">
+        Ei hakutuloksia 😢
+      </div>
+    `;
+
+    return;
+  }
 
   filtered.forEach(item => {
 
@@ -419,7 +456,7 @@ function renderSongs(filter=""){
   });
 }
 
-async function sendRequest(){
+async function sendRequest(event){
 
   const lastRequest =
     localStorage.getItem("lastRequest");
@@ -439,6 +476,25 @@ async function sendRequest(){
     }
   }
 
+  if(!selectedSong){
+
+    alert("Valitse kappale 🎵");
+
+    return;
+  }
+
+  if(
+    document
+      .getElementById("name")
+      .value
+      .trim() === ""
+  ){
+
+    alert("Kirjoita oma nimi 🙋");
+
+    return;
+  }
+
   const payload = {
 
     name:
@@ -451,6 +507,12 @@ async function sendRequest(){
     message:
       document.getElementById("message").value
   };
+
+  const button = event.target;
+
+  button.disabled = true;
+  button.style.opacity = "0.5";
+  button.innerText = "Lähetetään...";
 
   try{
 
@@ -485,6 +547,10 @@ async function sendRequest(){
         .getElementById("successBox")
         .style.display = "none";
 
+      button.disabled = false;
+      button.style.opacity = "1";
+      button.innerText = "🎵 Lähetä biisitoive DJ:lle 🎵";
+
       goHome();
 
     },2000);
@@ -494,64 +560,196 @@ async function sendRequest(){
     console.log(err);
 
     alert("❌ Lähetys epäonnistui");
+
+    button.disabled = false;
+    button.style.opacity = "1";
+    button.innerText = "🎵 Lähetä biisitoive DJ:lle 🎵";
   }
 }
 
-async function sendSuggestion(){
+async function sendSuggestion(event){
 
-  await fetch(WEBHOOK_URL, {
+  const lastRequest =
+    localStorage.getItem("lastRequest");
 
-    method:"POST",
+  if(lastRequest){
 
-    mode:"no-cors",
+    const secondsPassed =
+      (Date.now() - Number(lastRequest)) / 1000;
 
-    body:JSON.stringify({
+    if(secondsPassed < 30){
 
-      action:"suggestion",
+      alert(
+        `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta ehdotusta`
+      );
 
-      artist:
-        document.getElementById("suggestArtist").value,
+      return;
+    }
+  }
 
-      song:
-        document.getElementById("suggestSong").value,
+  if(
+    document
+      .getElementById("suggestArtist")
+      .value
+      .trim() === "" ||
 
-      message:
-        document.getElementById("suggestMessage").value
+    document
+      .getElementById("suggestSong")
+      .value
+      .trim() === ""
+  ){
 
-    })
+    alert("Täytä artisti ja kappale 🎵");
 
-  });
+    return;
+  }
 
-  alert("🔥 Biisiehdotus lähetetty!");
+  const button = event.target;
 
-  goHome();
+  button.disabled = true;
+  button.style.opacity = "0.5";
+  button.innerText = "Lähetetään...";
+
+  try{
+
+    await fetch(WEBHOOK_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body:JSON.stringify({
+
+        action:"suggestion",
+
+        artist:
+          document.getElementById("suggestArtist").value,
+
+        song:
+          document.getElementById("suggestSong").value,
+
+        message:
+          document.getElementById("suggestMessage").value
+
+      })
+
+    });
+
+    localStorage.setItem(
+      "lastRequest",
+      Date.now()
+    );
+
+    alert("🔥 Biisiehdotus lähetetty!");
+
+    document.getElementById("suggestArtist").value = "";
+    document.getElementById("suggestSong").value = "";
+    document.getElementById("suggestMessage").value = "";
+
+    button.disabled = false;
+    button.style.opacity = "1";
+    button.innerText = "🔥 Lähetä ehdotus";
+
+    goHome();
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Lähetys epäonnistui");
+
+    button.disabled = false;
+    button.style.opacity = "1";
+    button.innerText = "🔥 Lähetä ehdotus";
+  }
 }
 
-async function sendDJMessage(){
+async function sendDJMessage(event){
 
-  await fetch(WEBHOOK_URL, {
+  const lastRequest =
+    localStorage.getItem("lastRequest");
 
-    method:"POST",
+  if(lastRequest){
 
-    mode:"no-cors",
+    const secondsPassed =
+      (Date.now() - Number(lastRequest)) / 1000;
 
-    body:JSON.stringify({
+    if(secondsPassed < 30){
 
-      action:"djmessage",
+      alert(
+        `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta viestiä`
+      );
 
-      name:
-        document.getElementById("djMessageName").value,
+      return;
+    }
+  }
 
-      message:
-        document.getElementById("djMessageText").value
+  if(
+    document
+      .getElementById("djMessageText")
+      .value
+      .trim() === ""
+  ){
 
-    })
+    alert("Kirjoita viesti 😄");
 
-  });
+    return;
+  }
 
-  alert("📣 Viesti lähetetty DJ:lle");
+  const button = event.target;
 
-  goHome();
+  button.disabled = true;
+  button.style.opacity = "0.5";
+  button.innerText = "Lähetetään...";
+
+  try{
+
+    await fetch(WEBHOOK_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body:JSON.stringify({
+
+        action:"djmessage",
+
+        name:
+          document.getElementById("djMessageName").value,
+
+        message:
+          document.getElementById("djMessageText").value
+
+      })
+
+    });
+
+    localStorage.setItem(
+      "lastRequest",
+      Date.now()
+    );
+
+    alert("📣 Viesti lähetetty DJ:lle");
+
+    document.getElementById("djMessageName").value = "";
+    document.getElementById("djMessageText").value = "";
+
+    button.disabled = false;
+    button.style.opacity = "1";
+    button.innerText = "📣 Lähetä viesti";
+
+    goHome();
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Lähetys epäonnistui");
+
+    button.disabled = false;
+    button.style.opacity = "1";
+    button.innerText = "📣 Lähetä viesti";
+  }
 }
 
 async function loadPin(){
@@ -616,5 +814,7 @@ loadPin();
 renderSongs();
 
 </script>
+
 </body>
 </html>
+```
