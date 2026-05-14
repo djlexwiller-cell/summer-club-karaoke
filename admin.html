@@ -344,13 +344,19 @@ async function loadRequests(){
         return;
       }
 
+      const titleHtml = song || artist
+        ? `
+          <div class="song">${escapeHtml(song)}</div>
+          ${artist ? `<div class="artist">${escapeHtml(artist)}</div>` : ""}
+        `
+        : "";
+
       const card = document.createElement("article");
       card.className = "request-card";
       card.innerHTML = `
         <div class="request-top">
           <div>
-            <div class="song">${escapeHtml(song || "Nimetön kappale")}</div>
-            <div class="artist">${escapeHtml(artist || "Tuntematon artisti")}</div>
+            ${titleHtml}
           </div>
           <div class="timestamp">${escapeHtml(timestamp)}</div>
         </div>
