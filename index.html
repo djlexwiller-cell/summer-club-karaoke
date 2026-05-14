@@ -230,7 +230,10 @@ button:hover{
   ➕ Ehdota Puuttuvaa Bilekappaletta Listoille
 </button>
 
-<button onclick="openScreen('messageScreen')">
+<button
+  id="messageScreenButton"
+  onclick="openScreen('messageScreen')"
+>
   💬 Lähetä DJ:lle DM
 </button>
 
@@ -904,7 +907,7 @@ async function loadSettings(){
       if(enabled !== "ON"){
 
         const messageButton =
-          document.querySelectorAll("button")[2];
+          document.getElementById("messageScreenButton");
 
         if(messageButton){
 
