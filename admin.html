@@ -362,34 +362,39 @@ async function loadRequests(){
 
   <div class="status-buttons">
 
-      <button 
-      class="skip-btn" onclick="hideMessage(${actualRow})"
-    >
-      🗑️ Piilota
-    </button>
+  <button
+    class="status-btn queue-btn ${status === "Jonossa" ? "active" : ""}"
+    onclick="setStatus(this,'Jonossa',${actualRow})"
+  >
+    🟡 Jonossa
+  </button>
 
-    <button
-      class="status-btn queue-btn ${status.includes("Jonossa") ? "active" : ""}"
-      onclick="setStatus(this,'Jonossa',${actualRow})"
-    >
-      🟡 Jonossa
-    </button>
+  <button
+    class="status-btn played-btn ${status === "Soitettu" ? "active" : ""}"
+    onclick="setStatus(this,'Soitettu',${actualRow})"
+  >
+    ✅ Soitettu
+  </button>
 
-    <button
-      class="status-btn played-btn ${status.includes("Soitettu") ? "active" : ""}"
-      onclick="setStatus(this,'Soitettu',${actualRow})"
-    >
-      ✅ Soitettu
-    </button>
+  <button
+    class="status-btn skip-btn ${status === "Skipattu" ? "active" : ""}"
+    onclick="setStatus(this,'Skipattu',${actualRow})"
+  >
+    ⛔ Skipattu
+  </button>
 
-    <button
-      class="status-btn skip-btn ${status.includes("Skipattu") ? "active" : ""}"
-      onclick="setStatus(this,'Skipattu',${actualRow})"
-    >
-      ⛔ Skipattu
-    </button>
+  <button
+    class="status-btn"
+    style="
+      background:#444;
+      color:white;
+    "
+    onclick="hideMessage(${actualRow})"
+  >
+    🗑️ Piilota
+  </button>
 
-  </div>
+</div>
 
 `;
 
