@@ -1,106 +1,123 @@
 <!DOCTYPE html>
-
 <html lang="fi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Summer Club Karaoke V3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BileKaraoke</title>
 
 <style>
-
-html,
-body{
-  overflow-x:hidden;
-}
-  
-body{
-  background:
-    linear-gradient(
-      rgba(0,0,0,0.65),
-      rgba(0,0,0,0.75)
-    ),
-    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop");
-
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-
-  color:white;
-  font-family:Arial,sans-serif;
-  margin:0;
-  padding:20px;
+:root{
+  color-scheme:dark;
+  --bg:#09090b;
+  --panel:#17171c;
+  --panel-strong:#202028;
+  --text:#ffffff;
+  --muted:#b6b6c2;
+  --soft:#777787;
+  --accent:#ff2f8f;
+  --accent-strong:#ff5aa7;
+  --ok:#67e88b;
+  --danger:#ff6b6b;
+  --border:rgba(255,255,255,0.12);
+  --shadow:0 18px 60px rgba(0,0,0,0.42);
 }
 
-.container{
-  max-width:800px;
-  margin:auto;
-}
-
-h1{
-  font-size:42px;
-  margin-bottom:10px;
-}
-
-.subtitle{
-  color:#aaa;
-  margin-bottom:25px;
-
-  overflow:hidden;
-  white-space:nowrap;
+*{
   box-sizing:border-box;
 }
 
-.subtitle span{
-  display:inline-block;
-  padding-left:100%;
-  animation:marquee 14s linear infinite;
+html,
+body{
+  min-height:100%;
+  margin:0;
+  overflow-x:hidden;
 }
 
-@keyframes marquee{
+body{
+  color:var(--text);
+  font-family:Arial, Helvetica, sans-serif;
+  background:
+    linear-gradient(rgba(0,0,0,0.58),rgba(0,0,0,0.78)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
 
-  0%{
-    transform:translateX(0);
-  }
+button,
+input,
+textarea{
+  font:inherit;
+}
 
-  100%{
-    transform:translateX(-100%);
-  }
+button{
+  min-height:54px;
+  border:0;
+  border-radius:8px;
+  padding:14px 18px;
+  color:var(--text);
+  background:var(--accent);
+  font-weight:800;
+  cursor:pointer;
+  transition:transform 0.16s ease, background 0.16s ease, opacity 0.16s ease;
+}
+
+button:hover{
+  background:var(--accent-strong);
+  transform:translateY(-1px);
+}
+
+button:disabled{
+  cursor:not-allowed;
+  opacity:0.55;
+  transform:none;
 }
 
 input,
 textarea{
   width:100%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  background:#1e1e1e;
-  color:white;
-  margin-top:10px;
-  box-sizing:border-box;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:rgba(17,17,22,0.94);
+  color:var(--text);
+  padding:15px 16px;
   font-size:16px;
+  outline:none;
+}
+
+input:focus,
+textarea:focus{
+  border-color:rgba(255,47,143,0.8);
+  box-shadow:0 0 0 3px rgba(255,47,143,0.16);
 }
 
 textarea{
-  min-height:120px;
+  min-height:118px;
   resize:vertical;
 }
 
-button{
-  width:100%;
-  padding:18px;
-  margin-top:20px;
-  border:none;
-  border-radius:12px;
-  background:#ff0088;
-  color:white;
-  font-size:18px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.2s;
+.app{
+  width:min(820px,100%);
+  margin:0 auto;
+  padding:24px 16px 44px;
 }
 
-button:hover{
-  background:#ff1493;
+.brand{
+  padding:18px 0 24px;
+}
+
+.brand h1,
+.screen h1{
+  margin:0;
+  font-size:clamp(31px,6vw,50px);
+  line-height:1.02;
+}
+
+.lead{
+  margin:12px 0 0;
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.45;
 }
 
 .screen{
@@ -111,273 +128,267 @@ button:hover{
   display:block;
 }
 
-.back-btn{
-  background:#272727;
+.actions{
+  display:grid;
+  gap:12px;
+  margin-top:22px;
 }
 
-#songs{
+.secondary{
+  background:var(--panel-strong);
+}
+
+.secondary:hover{
+  background:#2a2a34;
+}
+
+.back{
+  width:auto;
+  min-height:44px;
+  margin-bottom:22px;
+  padding:10px 14px;
+  background:rgba(32,32,40,0.92);
+}
+
+.field{
   margin-top:20px;
-  max-height:65vh;
-  overflow-y:auto;
-  padding-right:5px;
-
-  scrollbar-width:none;
-  -ms-overflow-style:none;
 }
 
-#songs::-webkit-scrollbar{
+.field label{
+  display:block;
+  margin-bottom:9px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.song-list{
+  max-height:64vh;
+  margin-top:18px;
+  padding-right:4px;
+  overflow:auto;
+  scrollbar-width:none;
+}
+
+.song-list::-webkit-scrollbar{
   display:none;
 }
 
-.song{
-  background:#1b1b1b;
-  padding:16px;
-  border-radius:14px;
-  margin-bottom:10px;
-  cursor:pointer;
-  border:2px solid transparent;
+.song-card,
+.selected-song,
+.notice{
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:rgba(23,23,28,0.94);
+  box-shadow:var(--shadow);
 }
 
-.song:hover{
-  background:#252525;
+.song-card{
+  width:100%;
+  margin:0 0 10px;
+  padding:15px 16px;
+  text-align:left;
+  color:var(--text);
+}
+
+.song-card:hover{
+  background:rgba(33,33,42,0.96);
 }
 
 .song-title{
   font-size:18px;
-  font-weight:bold;
+  font-weight:800;
 }
 
 .song-artist{
-  color:#999;
   margin-top:5px;
+  color:var(--muted);
 }
 
 .selected-song{
-  margin-top:20px;
-  background:#1b1b1b;
-  border-radius:14px;
+  margin:8px 0 22px;
   padding:16px;
 }
 
+.selected-song strong{
+  display:block;
+  margin-bottom:8px;
+}
+
 .success{
-  margin-top:20px;
-  background:#16351f;
-  color:#7dff9c;
-  padding:15px;
-  border-radius:12px;
   display:none;
+  margin-top:18px;
+  padding:14px 16px;
+  border-radius:8px;
+  background:rgba(61,170,91,0.18);
+  color:var(--ok);
+  font-weight:800;
+}
+
+.notice{
+  margin-top:18px;
+  padding:16px;
+  color:var(--muted);
 }
 
 .footer{
   margin-top:40px;
-  color:#777;
+  color:var(--soft);
   text-align:center;
 }
 
-#pinScreen{
+.pin-screen{
   position:fixed;
   inset:0;
-  background:#0f0f0f;
-  z-index:9999;
+  z-index:20;
   display:flex;
   align-items:center;
   justify-content:center;
-  flex-direction:column;
-  padding:20px;
+  padding:22px;
+  background:
+    linear-gradient(rgba(0,0,0,0.72),rgba(0,0,0,0.9)),
+    url("https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=1600&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
 }
 
+.pin-panel{
+  width:min(420px,100%);
+  padding:24px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:rgba(12,12,16,0.92);
+  box-shadow:var(--shadow);
+}
+
+.pin-panel h1{
+  margin:0 0 12px;
+  font-size:30px;
+}
+
+.pin-panel p{
+  margin:0 0 18px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.pin-panel button{
+  width:100%;
+  margin-top:12px;
+}
+
+@media (max-width:560px){
+  .app{
+    padding-top:16px;
+  }
+
+  .brand h1,
+  .screen h1{
+    font-size:34px;
+  }
+
+  button{
+    width:100%;
+  }
+}
 </style>
-
 </head>
+
 <body>
-
-<div id="pinScreen">
-
-  <h1>🎟️ Syötä tämän illan bilekoodi</h1>
-
-<input
- type="text"
- id="pinInput"
- placeholder="Esim. CLUB42"
- style="max-width:300px;text-align:center;font-size:22px;"
-/>
-
-  <button onclick="checkPin()" style="max-width:300px;">
-    🔓 Avaa bilekaraoke
-  </button>
-
+<div id="pinScreen" class="pin-screen">
+  <div class="pin-panel">
+    <h1>Syötä illan bilekoodi</h1>
+    <p>Koodi vaihtuu tapahtuman mukaan. Kysy se DJ:ltä tai henkilökunnalta.</p>
+    <input id="pinInput" type="text" placeholder="Esim. CLUB42" autocomplete="off" />
+    <button type="button" onclick="checkPin()">Avaa bilekaraoke</button>
+  </div>
 </div>
 
-<div class="container">
+<main class="app">
+  <header class="brand">
+    <h1>BileKaraoke</h1>
+    <p class="lead">Valitse biisi, lähetä toive jonoon tai vinkkaa DJ:lle puuttuva kappale.</p>
+  </header>
 
-  <!-- HOME -->
+  <section id="homeScreen" class="screen active">
+    <div class="actions">
+      <button type="button" onclick="openScreen('songScreen')">Lisää biisitoive jonoon</button>
+      <button type="button" class="secondary" onclick="openScreen('suggestionScreen')">Ehdota puuttuvaa kappaletta</button>
+      <button type="button" class="secondary" id="messageScreenButton" onclick="openScreen('messageScreen')">Lähetä DJ:lle viesti</button>
+    </div>
+  </section>
 
-  <div id="homeScreen" class="screen active">
+  <section id="songScreen" class="screen">
+    <button type="button" class="back" onclick="goHome()">Takaisin</button>
+    <h1>Mitä lauletaan?</h1>
+    <div class="field">
+      <label for="search">Hae artistia tai kappaletta</label>
+      <input type="text" id="search" placeholder="Kirjoita hakusana..." autocomplete="off" />
+    </div>
+    <div id="songs" class="song-list"></div>
+  </section>
 
+  <section id="requestScreen" class="screen">
+    <button type="button" class="back" onclick="backToSongs()">Vaihda biisi</button>
+    <div id="selectedSong" class="selected-song"></div>
+    <div class="field">
+      <label for="name">Oma nimi</label>
+      <input type="text" id="name" placeholder="Kirjoita nimesi..." autocomplete="name" />
+    </div>
+    <div class="field">
+      <label for="message">Terveiset DJ:lle</label>
+      <textarea id="message" placeholder="Shoutoutit, synttärit, terveiset..."></textarea>
+    </div>
+    <button type="button" onclick="sendRequest(event)">Lähetä biisitoive DJ:lle</button>
+    <div class="success" id="successBox">Biisitoive lähetetty!</div>
+  </section>
 
-<h1>🎤 BileKaraoke 🎤</h1>
+  <section id="suggestionScreen" class="screen">
+    <button type="button" class="back" onclick="goHome()">Takaisin</button>
+    <h1>Ehdota biisiä</h1>
+    <div class="field">
+      <label for="suggestArtist">Artisti</label>
+      <input type="text" id="suggestArtist" placeholder="Artisti" />
+    </div>
+    <div class="field">
+      <label for="suggestSong">Kappale</label>
+      <input type="text" id="suggestSong" placeholder="Kappale" />
+    </div>
+    <div class="field">
+      <label for="suggestMessage">Lisätieto</label>
+      <textarea id="suggestMessage" placeholder="Miksi tämä pitäisi lisätä listoille?"></textarea>
+    </div>
+    <button type="button" onclick="sendSuggestion(event)">Lähetä ehdotus</button>
+  </section>
 
-<div class="subtitle">
-  <span>
-    🔥❤️ Ihanaa kun klikkasit itsesi tänne, valitse alta mitä haluat tehdä 😄🔥
-  </span>
-</div>
-<button onclick="openScreen('songScreen')">
-  🎵 Lisää Toiveesi Jonoon
-</button>
+  <section id="messageScreen" class="screen">
+    <button type="button" class="back" onclick="goHome()">Takaisin</button>
+    <h1>Lähetä DJ:lle viesti</h1>
+    <div class="field">
+      <label for="djMessageName">Nimi</label>
+      <input type="text" id="djMessageName" placeholder="Nimi, vapaaehtoinen" />
+    </div>
+    <div class="field">
+      <label for="djMessageText">Viesti</label>
+      <textarea id="djMessageText" placeholder="Kirjoita viesti DJ:lle..."></textarea>
+    </div>
+    <button type="button" onclick="sendDJMessage(event)">Lähetä viesti</button>
+  </section>
 
-<button onclick="openScreen('suggestionScreen')">
-  ➕ Ehdota Puuttuvaa Bilekappaletta Listoille
-</button>
-
-<button
-  id="messageScreenButton"
-  onclick="openScreen('messageScreen')"
->
-  💬 Lähetä DJ:lle DM
-</button>
-
-
-  </div>
-
-  <!-- SONG SEARCH -->
-
-  <div id="songScreen" class="screen">
-
-
-<button class="back-btn" onclick="goHome()">
-  ← Takaisin
-</button>
-
-<h1>🎵 Mitä lauletaan? </h1>
-
-<input
-  type="text"
-  id="search"
-  placeholder="Hae artistia tai kappaletta..."
-/>
-
-<div id="songs"></div>
-
-
-  </div>
-
-  <!-- REQUEST -->
-
-  <div id="requestScreen" class="screen">
-
-
-<button class="back-btn" onclick="backToSongs()">
-  ← Vaihda biisi
-</button>
-
-<div id="selectedSong" class="selected-song"></div>
-
-<h2>🙋 Oma nimi</h2>
-
-<input
-  type="text"
-  id="name"
-  placeholder="Kirjoita nimesi..."
-/>
-
-<h2>📣 Terveiset DJ:lle</h2>
-
-<textarea
-  id="message"
-  placeholder="Shoutoutit, synttärit, terveiset..."
-></textarea>
-
-<button onclick="sendRequest(event)">
-  🎵 Lähetä biisitoive DJ:lle 🎵
-</button>
-
-<div class="success" id="successBox">
-  🔥 Biisitoive lähetetty!
-</div>
-
-
-  </div>
-
-  <!-- SUGGESTION -->
-
-  <div id="suggestionScreen" class="screen">
-
-
-<button class="back-btn" onclick="goHome()">
-  ← Takaisin
-</button>
-
-<h1>➕ Ehdota biisiä</h1>
-
-<input
-  type="text"
-  id="suggestArtist"
-  placeholder="Artisti"
-/>
-
-<input
-  type="text"
-  id="suggestSong"
-  placeholder="Kappale"
-/>
-
-<textarea
-  id="suggestMessage"
-  placeholder="Miksi tämä pitäisi lisätä? 😄"
-></textarea>
-
-<button onclick="sendSuggestion(event)">
-  🔥 Lähetä ehdotus
-</button>
-
-
-  </div>
-
-  <!-- DJ MESSAGE -->
-
-  <div id="messageScreen" class="screen">
-
-
-<button class="back-btn" onclick="goHome()">
-  ← Takaisin
-</button>
-
-<h1>💬 Lähetä DJ:lle DM</h1>
-
-<input
-  type="text"
-  id="djMessageName"
-  placeholder="Nimi (optional)"
-/>
-
-<textarea
-  id="djMessageText"
-  placeholder="Kirjoita viesti DJ:lle 😄"
-></textarea>
-
-<button onclick="sendDJMessage(event)">
-  📣 Lähetä viesti
-</button>
-
-
-  </div>
-
-  <div class="footer">
-    BileKaraoke • Lex Willer 🔥
-  </div>
-
-</div>
+  <footer class="footer">BileKaraoke • Lex Willer</footer>
+</main>
 
 <script src="songs.js"></script>
-
 <script>
-
 const WEBHOOK_URL =
-"https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
+  "https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
 
 const PIN_CSV_URL =
-"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
+  "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
+
+const MESSAGE_SETTINGS_URL =
+  "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1934620115";
+
+const COOLDOWN_SECONDS = 30;
 
 const songsDiv = document.getElementById("songs");
 const searchInput = document.getElementById("search");
@@ -386,600 +397,284 @@ let selectedSong = null;
 let currentPin = "";
 let savedScrollPosition = 0;
 
-function hideAllScreens(){
+function escapeHtml(value = ""){
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
 
-  document
-    .querySelectorAll('.screen')
-    .forEach(screen=>{
-      screen.classList.remove('active');
-    });
+function hideAllScreens(){
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.classList.remove("active");
+  });
 }
 
 function openScreen(screenId){
-
   hideAllScreens();
+  document.getElementById(screenId).classList.add("active");
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
 
-  document
-    .getElementById(screenId)
-    .classList.add('active');
+function clearForms(){
+  ["name","message","search","suggestArtist","suggestSong","suggestMessage","djMessageName","djMessageText"].forEach(id => {
+    const field = document.getElementById(id);
+    if(field){
+      field.value = "";
+    }
+  });
 }
 
 function goHome(){
-
-  // HIDE ALL
-
-  hideAllScreens();
-
-  document
-    .getElementById('homeScreen')
-    .classList.add('active');
-
-  // CLEAR REQUEST FORM
-
-  document.getElementById("name").value = "";
-  document.getElementById("message").value = "";
-
-  // CLEAR SONG SEARCH
-
-  document.getElementById("search").value = "";
-
-  // CLEAR SUGGESTION FORM
-
-  document.getElementById("suggestArtist").value = "";
-  document.getElementById("suggestSong").value = "";
-  document.getElementById("suggestMessage").value = "";
-
-  // CLEAR DJ MESSAGE FORM
-
-  document.getElementById("djMessageName").value = "";
-  document.getElementById("djMessageText").value = "";
-
-  // RESET SONG LIST
-
-  renderSongs("");
-
-  // RESET SELECTED SONG
-
+  clearForms();
   selectedSong = null;
-
-  document
-    .getElementById("selectedSong")
-    .innerHTML = "";
+  document.getElementById("selectedSong").innerHTML = "";
+  renderSongs("");
+  openScreen("homeScreen");
 }
 
 function backToSongs(){
-
-  openScreen('songScreen');
-
-  setTimeout(()=>{
-
+  openScreen("songScreen");
+  setTimeout(() => {
     songsDiv.scrollTop = savedScrollPosition;
-
   },50);
 }
 
-searchInput.addEventListener("input", e => {
+function getSongData(){
+  if(typeof songs !== "undefined" && Array.isArray(songs)){
+    return songs;
+  }
 
-  renderSongs(e.target.value);
+  return Array.isArray(window.songs) ? window.songs : [];
+}
 
-});
-
-function renderSongs(filter=""){
+function renderSongs(filter = ""){
+  const songData = getSongData();
+  const query = filter.trim().toLowerCase();
 
   songsDiv.innerHTML = "";
 
-  const filtered = songs
-    .filter(item =>
-      item.artist.toLowerCase().includes(filter.toLowerCase()) ||
-      item.song.toLowerCase().includes(filter.toLowerCase())
-    )
-    .sort((a,b)=>
-      a.artist.localeCompare(b.artist)
-    );
+  if(songData.length === 0){
+    songsDiv.innerHTML = '<div class="notice">Biisilistaa ei ole vielä ladattu.</div>';
+    return;
+  }
+
+  const filtered = songData
+    .filter(item => {
+      const artist = String(item.artist || "").toLowerCase();
+      const song = String(item.song || "").toLowerCase();
+      return artist.includes(query) || song.includes(query);
+    })
+    .sort((a,b) => String(a.artist || "").localeCompare(String(b.artist || ""),"fi"));
 
   if(filtered.length === 0){
-
-    songsDiv.innerHTML = `
-      <div class="song">
-        Ei hakutuloksia 😢
-      </div>
-    `;
-
+    songsDiv.innerHTML = '<div class="notice">Ei hakutuloksia.</div>';
     return;
   }
 
   filtered.forEach(item => {
-
-    const div = document.createElement("div");
-
-    div.className = "song";
-
-    div.innerHTML = `
-      <div class="song-title">${item.song}</div>
-      <div class="song-artist">${item.artist}</div>
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "song-card";
+    button.innerHTML = `
+      <div class="song-title">${escapeHtml(item.song)}</div>
+      <div class="song-artist">${escapeHtml(item.artist)}</div>
     `;
 
-    div.onclick = () => {
-
+    button.addEventListener("click",() => {
       savedScrollPosition = songsDiv.scrollTop;
-
       selectedSong = item;
+      document.getElementById("selectedSong").innerHTML = `
+        <strong>Valittu biisi</strong>
+        ${escapeHtml(item.song)}<br>
+        <span style="color:var(--muted);">${escapeHtml(item.artist)}</span>
+      `;
+      openScreen("requestScreen");
+    });
 
-      document
-        .getElementById("selectedSong")
-        .innerHTML = `
-          <strong>🎵 Valittu biisi:</strong><br><br>
-          ${item.song}<br>
-          <span style="color:#999;">
-            ${item.artist}
-          </span>
-        `;
-
-      openScreen('requestScreen');
-
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
-    };
-
-    songsDiv.appendChild(div);
+    songsDiv.appendChild(button);
   });
 }
 
-async function sendRequest(event){
+function getCooldownSecondsLeft(){
+  const lastRequest = Number(localStorage.getItem("lastRequest") || 0);
+  if(!lastRequest){
+    return 0;
+  }
 
-  const lastRequest =
-    localStorage.getItem("lastRequest");
+  const secondsPassed = (Date.now() - lastRequest) / 1000;
+  return Math.max(0, Math.ceil(COOLDOWN_SECONDS - secondsPassed));
+}
 
-  if(lastRequest){
+function requireCooldown(label){
+  const secondsLeft = getCooldownSecondsLeft();
+  if(secondsLeft > 0){
+    alert(`Odota ${secondsLeft} sekuntia ennen uutta ${label}.`);
+    return false;
+  }
+  return true;
+}
 
-    const secondsPassed =
-      (Date.now() - Number(lastRequest)) / 1000;
+async function postToAppsScript(payload){
+  await fetch(WEBHOOK_URL, {
+    method:"POST",
+    mode:"no-cors",
+    body:JSON.stringify(payload)
+  });
+}
 
-    if(secondsPassed < 30){
+async function runSubmit(button, loadingText, doneText, action){
+  const originalText = button.innerText;
+  button.disabled = true;
+  button.innerText = loadingText;
 
-      alert(
-        `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta toivetta`
-      );
-
-      return;
+  try{
+    await action();
+    localStorage.setItem("lastRequest", String(Date.now()));
+    if(doneText){
+      alert(doneText);
     }
+    goHome();
+  }catch(err){
+    console.error(err);
+    alert("Lähetys epäonnistui. Yritä hetken päästä uudelleen.");
+  }finally{
+    button.disabled = false;
+    button.innerText = originalText;
+  }
+}
+
+async function sendRequest(event){
+  if(!requireCooldown("toivetta")){
+    return;
   }
 
   if(!selectedSong){
-
-    alert("Valitse kappale 🎵");
-
+    alert("Valitse kappale ensin.");
     return;
   }
 
-  if(
-    document
-      .getElementById("name")
-      .value
-      .trim() === ""
-  ){
+  const name = document.getElementById("name").value.trim();
+  const message = document.getElementById("message").value.trim();
 
-    alert("Kirjoita oma nimi 🙋");
-
+  if(!name){
+    alert("Kirjoita oma nimi.");
     return;
   }
 
-  const payload = {
-
-    name:
-      document.getElementById("name").value,
-
-    artist:selectedSong.artist,
-
-    song:selectedSong.song,
-
-    message:
-      document.getElementById("message").value
-  };
-
-  const button = event.target;
-
-  button.disabled = true;
-  button.style.opacity = "0.5";
-  button.innerText = "Lähetetään...";
-
-  try{
-
-    await fetch(WEBHOOK_URL, {
-
-      method:"POST",
-
-      mode:"no-cors",
-
-      body:JSON.stringify(payload)
-
+  await runSubmit(event.target, "Lähetetään...", "", async () => {
+    await postToAppsScript({
+      name,
+      artist:selectedSong.artist,
+      song:selectedSong.song,
+      message
     });
 
-    localStorage.setItem(
-      "lastRequest",
-      Date.now()
-    );
-
-    document
-      .getElementById("successBox")
-      .style.display = "block";
-
-    document.getElementById("name").value = "";
-    document.getElementById("message").value = "";
-    document.getElementById("search").value = "";
-
-    renderSongs("");
-
-    setTimeout(()=>{
-
-      document
-        .getElementById("successBox")
-        .style.display = "none";
-
-      button.disabled = false;
-      button.style.opacity = "1";
-      button.innerText = "🎵 Lähetä biisitoive DJ:lle 🎵";
-
-      goHome();
-
-    },2000);
-
-  }catch(err){
-
-    console.log(err);
-
-    alert("❌ Lähetys epäonnistui");
-
-    button.disabled = false;
-    button.style.opacity = "1";
-    button.innerText = "🎵 Lähetä biisitoive DJ:lle 🎵";
-  }
+    document.getElementById("successBox").style.display = "block";
+    await new Promise(resolve => setTimeout(resolve,1400));
+    document.getElementById("successBox").style.display = "none";
+  });
 }
 
 async function sendSuggestion(event){
-
-  const lastRequest =
-    localStorage.getItem("lastRequest");
-
-  if(lastRequest){
-
-    const secondsPassed =
-      (Date.now() - Number(lastRequest)) / 1000;
-
-    if(secondsPassed < 30){
-
-      alert(
-        `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta ehdotusta`
-      );
-
-      return;
-    }
-  }
-
-  if(
-    document
-      .getElementById("suggestArtist")
-      .value
-      .trim() === "" ||
-
-    document
-      .getElementById("suggestSong")
-      .value
-      .trim() === ""
-  ){
-
-    alert("Täytä artisti ja kappale 🎵");
-
+  if(!requireCooldown("ehdotusta")){
     return;
   }
 
-  const button = event.target;
+  const artist = document.getElementById("suggestArtist").value.trim();
+  const song = document.getElementById("suggestSong").value.trim();
+  const message = document.getElementById("suggestMessage").value.trim();
 
-  button.disabled = true;
-  button.style.opacity = "0.5";
-  button.innerText = "Lähetetään...";
-
-  try{
-
-    await fetch(WEBHOOK_URL, {
-
-      method:"POST",
-
-      mode:"no-cors",
-
-      body:JSON.stringify({
-
-        action:"suggestion",
-
-        artist:
-          document.getElementById("suggestArtist").value,
-
-        song:
-          document.getElementById("suggestSong").value,
-
-        message:
-          document.getElementById("suggestMessage").value
-
-      })
-
-    });
-
-    localStorage.setItem(
-      "lastRequest",
-      Date.now()
-    );
-
-    alert("🔥 Biisiehdotus lähetetty!");
-
-    document.getElementById("suggestArtist").value = "";
-    document.getElementById("suggestSong").value = "";
-    document.getElementById("suggestMessage").value = "";
-
-    button.disabled = false;
-    button.style.opacity = "1";
-    button.innerText = "🔥 Lähetä ehdotus";
-
-    goHome();
-
-  }catch(err){
-
-    console.log(err);
-
-    alert("❌ Lähetys epäonnistui");
-
-    button.disabled = false;
-    button.style.opacity = "1";
-    button.innerText = "🔥 Lähetä ehdotus";
+  if(!artist || !song){
+    alert("Täytä artisti ja kappale.");
+    return;
   }
+
+  await runSubmit(event.target, "Lähetetään...", "Biisiehdotus lähetetty!", async () => {
+    await postToAppsScript({
+      action:"suggestion",
+      artist,
+      song,
+      message
+    });
+  });
 }
 
 async function sendDJMessage(event){
-
-  const lastRequest =
-    localStorage.getItem("lastRequest");
-
-  if(lastRequest){
-
-    const secondsPassed =
-      (Date.now() - Number(lastRequest)) / 1000;
-
-    if(secondsPassed < 30){
-
-      alert(
-        `⏳ Odota ${Math.ceil(30 - secondsPassed)} sekuntia ennen uutta viestiä`
-      );
-
-      return;
-    }
-  }
-
-  if(
-    document
-      .getElementById("djMessageText")
-      .value
-      .trim() === ""
-  ){
-
-    alert("Kirjoita viesti 😄");
-
+  if(!requireCooldown("viestiä")){
     return;
   }
 
-  const button = event.target;
+  const name = document.getElementById("djMessageName").value.trim();
+  const message = document.getElementById("djMessageText").value.trim();
 
-  button.disabled = true;
-  button.style.opacity = "0.5";
-  button.innerText = "Lähetetään...";
-
-  try{
-
-    await fetch(WEBHOOK_URL, {
-
-      method:"POST",
-
-      mode:"no-cors",
-
-      body:JSON.stringify({
-
-        action:"djmessage",
-
-        name:
-          document.getElementById("djMessageName").value,
-
-        message:
-          document.getElementById("djMessageText").value
-
-      })
-
-    });
-
-    localStorage.setItem(
-      "lastRequest",
-      Date.now()
-    );
-
-    alert("📣 Viesti lähetetty DJ:lle");
-
-    document.getElementById("djMessageName").value = "";
-    document.getElementById("djMessageText").value = "";
-
-    button.disabled = false;
-    button.style.opacity = "1";
-    button.innerText = "📣 Lähetä viesti";
-
-    goHome();
-
-  }catch(err){
-
-    console.log(err);
-
-    alert("❌ Lähetys epäonnistui");
-
-    button.disabled = false;
-    button.style.opacity = "1";
-    button.innerText = "📣 Lähetä viesti";
+  if(!message){
+    alert("Kirjoita viesti.");
+    return;
   }
+
+  await runSubmit(event.target, "Lähetetään...", "Viesti lähetetty DJ:lle.", async () => {
+    await postToAppsScript({
+      action:"djmessage",
+      name,
+      message
+    });
+  });
 }
 
 async function loadPin(){
+  try{
+    const response = await fetch(PIN_CSV_URL);
+    const text = await response.text();
+    currentPin = (text.split("\n")[0] || "").replace(/"/g,"").trim();
 
-  const response =
-    await fetch(PIN_CSV_URL);
-
-  const text =
-    await response.text();
-
-  const rows =
-    text.split("\n");
-
-  if(rows[0]){
-
-    currentPin =
-      rows[0]
-        .replace(/\"/g,"")
-        .trim();
-  }
-
-  const savedPin =
-    localStorage.getItem("eventPin");
-
-  if(savedPin === currentPin){
-
-    document
-      .getElementById("pinScreen")
-      .style.display = "none";
+    if(localStorage.getItem("eventPin") === currentPin){
+      document.getElementById("pinScreen").style.display = "none";
+    }
+  }catch(err){
+    console.error(err);
   }
 }
 
 function checkPin(){
+  const enteredPin = document.getElementById("pinInput").value.trim();
 
-  const enteredPin =
-    document
-      .getElementById("pinInput")
-      .value
-      .trim();
-
-  if(
-    enteredPin.toUpperCase() ===
-    currentPin.toUpperCase()
-  ){
-
-    localStorage.setItem(
-      "eventPin",
-      currentPin
-    );
-
-    document
-      .getElementById("pinScreen")
-      .style.display = "none";
-
-  }else{
-
-    alert("❌ Väärä bilekoodi");
+  if(enteredPin && enteredPin.toUpperCase() === currentPin.toUpperCase()){
+    localStorage.setItem("eventPin", currentPin);
+    document.getElementById("pinScreen").style.display = "none";
+    return;
   }
+
+  alert("Väärä bilekoodi.");
 }
 
-async function loadSettings(){
-
+async function loadMessageToggle(){
   try{
+    const response = await fetch(MESSAGE_SETTINGS_URL);
+    const text = await response.text();
+    const cols = (text.split("\n")[0] || "").split(",");
+    const value = (cols[1] || "ON").replace(/"/g,"").replace(/\r/g,"").trim().toUpperCase();
+    const messageButton = document.getElementById("messageScreenButton");
 
-    const response =
-      await fetch(SETTINGS_URL);
-
-    const text =
-      await response.text();
-
-    const rows =
-      text.split("\n");
-
-    if(rows[0]){
-
-      const cols =
-        rows[0].split(",");
-
-      const enabled =
-        cols[1]
-          .replace(/\"/g,"")
-          .trim();
-
-      if(enabled !== "ON"){
-
-        const messageButton =
-          document.getElementById("messageScreenButton");
-
-        if(messageButton){
-
-          messageButton.style.display = "none";
-        }
-      }
+    if(messageButton){
+      messageButton.style.display = value === "ON" ? "block" : "none";
     }
-
   }catch(err){
-
-    console.log(err);
+    console.error(err);
   }
 }
-  
+
+searchInput.addEventListener("input", event => {
+  renderSongs(event.target.value);
+});
+
 loadPin();
-
-  async function loadMessageToggle(){
-
-  try{
-
-    const response =
-      await fetch(
-        "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1934620115"
-      );
-
-    const text =
-      await response.text();
-
-    const rows =
-      text.split("\n");
-
-    if(rows[0]){
-
-      const cols =
-        rows[0].split(",");
-
-      const value =
-        (cols[1] || "ON")
-          .replace(/\"/g,"")
-          .replace(/\r/g,"")
-          .trim()
-          .toUpperCase();
-
-     const messageButton =
-        document.getElementById("messageScreenButton");
-
-      if(messageButton){
-
-        messageButton.style.display =
-          value === "ON"
-            ? "block"
-            : "none";
-      }
-    }
-
-  }catch(err){
-
-    console.log(err);
-  }
-}
-
-loadMessageToggle();  
-  
+loadMessageToggle();
 renderSongs();
 
-  setInterval(()=>{
-
-  loadMessageToggle();
-
-},60000);
-
+setInterval(loadMessageToggle,60000);
 </script>
-
 </body>
 </html>
