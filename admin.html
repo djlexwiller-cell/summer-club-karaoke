@@ -265,6 +265,7 @@ h1{
     <div class="subtitle">Summer Club • Live Requests Dashboard</div>
 
     <div class="controls">
+      <button type="button" class="btn-gray" onclick="setAdminCode()">Admin-koodi</button>
       <button type="button" id="messageToggleButton" class="btn-blue" onclick="toggleMessages()">DJ Messages: ON</button>
       <button type="button" class="btn-blue" onclick="loadAll()">Päivitä jono</button>
       <button type="button" class="btn-red" onclick="endNight()">Päätä ilta</button>
@@ -296,7 +297,10 @@ const MESSAGE_SETTINGS_URL =
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
 
-const ADMIN_SECRET = "LEXWILLER2025";
+// Direct Google Apps Script calls usually need this as false.
+// Set true if APPS_SCRIPT_URL points to a CORS-capable proxy, for example Cloudflare Worker.
+const API_USES_READABLE_JSON = false;
+
 const requestFeed = document.getElementById("requestFeed");
 
 let messagesEnabled = true;
@@ -318,15 +322,74 @@ function parseCsvFirstRow(text){
   return (text.split("\n")[0] || "").split(",").map(cleanCell);
 }
 
+function getAdminCode(){
+  let adminCode = sessionStorage.getItem("adminCode") || "";
+
+  if(!adminCode){
+    adminCode = prompt("Syötä admin-koodi") || "";
+    adminCode = adminCode.trim();
+
+    if(adminCode){
+      sessionStorage.setItem("adminCode", adminCode);
+    }
+  }
+
+  return adminCode;
+}
+
+function setAdminCode(){
+  const currentCode = sessionStorage.getItem("adminCode") || "";
+  const adminCode = prompt("Syötä uusi admin-koodi", currentCode) || "";
+  const cleanCode = adminCode.trim();
+
+  if(cleanCode){
+    sessionStorage.setItem("adminCode", cleanCode);
+    alert("Admin-koodi tallennettu tähän selaimen välilehteen.");
+    return;
+  }
+
+  sessionStorage.removeItem("adminCode");
+  alert("Admin-koodi tyhjennetty tästä selaimen välilehdestä.");
+}
+
 async function postAdminAction(payload){
-  await fetch(APPS_SCRIPT_URL, {
-    method:"POST",
-    mode:"no-cors",
-    body:JSON.stringify({
-      ...payload,
-      secret:ADMIN_SECRET
-    })
+  const adminCode = getAdminCode();
+
+  if(!adminCode){
+    throw new Error("Admin-koodi puuttuu.");
+  }
+
+  const body = JSON.stringify({
+    ...payload,
+    adminCode
   });
+
+  if(!API_USES_READABLE_JSON){
+    await fetch(APPS_SCRIPT_URL, {
+      method:"POST",
+      mode:"no-cors",
+      body
+    });
+
+    return { success:true, opaque:true };
+  }
+
+  const response = await fetch(APPS_SCRIPT_URL, {
+    method:"POST",
+    mode:"cors",
+    headers:{
+      "Content-Type":"text/plain;charset=utf-8"
+    },
+    body
+  });
+
+  const result = await response.json();
+
+  if(!result.success){
+    throw new Error(result.error || "Admin-toiminto epäonnistui.");
+  }
+
+  return result;
 }
 
 async function loadPin(){
