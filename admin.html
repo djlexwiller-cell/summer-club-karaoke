@@ -1,9 +1,14 @@
+# Lex Willer Admin V3 Clean
+
+Korvaa nykyinen `admin.html` tällä versiolla.
+
+```html
 <!DOCTYPE html>
 <html lang="fi">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DJ Lex Willer Admin</title>
+<title>DJ Lex Willer Admin V3</title>
 
 <style>
 
@@ -15,12 +20,12 @@ body{
 }
 
 .header{
-  background:#161616;
-  padding:16px 20px;
-  border-bottom:1px solid #2a2a2a;
   position:sticky;
   top:0;
   z-index:999;
+  background:#161616;
+  border-bottom:1px solid #2a2a2a;
+  padding:18px;
 }
 
 .container{
@@ -34,32 +39,53 @@ h1{
 }
 
 .subtitle{
-  color:#999;
-  margin-top:4px;
+  color:#888;
+  margin-top:5px;
 }
 
 .controls{
-  margin-top:15px;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+  margin-top:18px;
 }
 
 button{
   border:none;
   border-radius:12px;
   padding:12px 16px;
-  color:white;
   font-weight:bold;
   cursor:pointer;
+  color:white;
 }
 
 .refresh{
   background:#2563eb;
 }
 
-.refresh:hover{
-  background:#1d4ed8;
+.endnight{
+  background:#991b1b;
+}
+
+.pin-box{
+  margin-top:20px;
+  background:#1a1a1a;
+  border-radius:18px;
+  padding:18px;
+  text-align:center;
+}
+
+.pin-title{
+  color:#888;
+  font-size:14px;
+}
+
+.pin-value{
+  margin-top:10px;
+  font-size:34px;
+  font-weight:bold;
+  color:#7dff9c;
+  letter-spacing:4px;
 }
 
 .request-feed{
@@ -68,11 +94,10 @@ button{
 
 .request-card{
   background:#1a1a1a;
+  border-left:5px solid #ff0088;
   border-radius:18px;
   padding:18px;
   margin-bottom:16px;
-  border-left:5px solid #ff0088;
-  touch-action:manipulation;
 }
 
 .request-top{
@@ -88,8 +113,8 @@ button{
 }
 
 .artist{
-  margin-top:4px;
   color:#aaa;
+  margin-top:5px;
 }
 
 .request-name{
@@ -101,8 +126,8 @@ button{
 .request-message{
   margin-top:12px;
   background:#252525;
-  padding:12px;
   border-radius:12px;
+  padding:12px;
   color:#ddd;
 }
 
@@ -112,14 +137,14 @@ button{
 }
 
 .status-buttons{
-  margin-top:16px;
+  margin-top:18px;
   display:flex;
-  gap:10px;
   flex-wrap:wrap;
+  gap:10px;
 }
 
 .status-btn{
-  opacity:0.4;
+  opacity:0.45;
   transition:0.2s;
 }
 
@@ -140,8 +165,8 @@ button{
   background:#991b1b;
 }
 
-.dragging{
-  opacity:0.5;
+.hide-btn{
+  background:#444;
 }
 
 .empty{
@@ -156,12 +181,7 @@ button{
     font-size:20px;
   }
 
-  button{
-    width:100%;
-  }
-
   .status-buttons button{
-    width:auto;
     flex:1;
   }
 }
@@ -180,41 +200,28 @@ button{
     </div>
 
     <div class="controls">
+
       <button class="refresh" onclick="loadRequests()">
         🔄 Refresh Queue
       </button>
 
-      <button class="skip-btn" onclick="endNight()">
+      <button class="endnight" onclick="endNight()">
         🧹 End Night
       </button>
+
     </div>
 
-    <div id="pinDisplay" style="
-  margin-top:20px;
-  background:#1a1a1a;
-  padding:18px;
-  border-radius:18px;
-  text-align:center;
-">
+    <div class="pin-box">
 
-  <div style="
-    color:#999;
-    font-size:14px;
-  ">
-    🎟️ Tonight's PIN
-  </div>
+      <div class="pin-title">
+        🎟️ Tonight's PIN
+      </div>
 
-  <div id="currentPin" style="
-    margin-top:10px;
-    font-size:36px;
-    font-weight:bold;
-    color:#7dff9c;
-    letter-spacing:4px;
-  ">
-    LOADING...
-  </div>
+      <div class="pin-value" id="currentPin">
+        LOADING...
+      </div>
 
-</div>
+    </div>
 
   </div>
 </div>
@@ -233,42 +240,29 @@ button{
 
 <script>
 
-// ========================================
-// PASTE GOOGLE SHEET CSV URL HERE
-// ========================================
-
-const SHEET_CSV_URL =
-"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=tsv";
-
-// ========================================
-// PASTE APPS SCRIPT URL HERE
-// ========================================
-
-const APPS_SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwMNRhRnPH7M7ca4_nruQg4pYpekx_j0MlpAKJ-jgjhoOEtxCg8ar4xkLJ4A1c2rB4zaQ/exec";
-
-// ========================================
-
-const requestFeed = document.getElementById("requestFeed");
-    let hiddenRows =
-    JSON.parse(
-    localStorage.getItem("hiddenRows") || "[]"
-  );
+const SHEET_URL =
+"PASTE_TSV_URL_HERE";
 
 const PIN_URL =
-"https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1989187739";
+"PASTE_PIN_URL_HERE";
 
-function sanitize(str){
+const APPS_SCRIPT_URL =
+"PASTE_APPS_SCRIPT_URL_HERE";
+
+const requestFeed =
+  document.getElementById("requestFeed");
+
+function sanitize(str=""){
 
   return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/\"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
-  async function loadPin(){
+async function loadPin(){
 
   try{
 
@@ -283,10 +277,10 @@ function sanitize(str){
 
     if(rows[0]){
 
-   const pin =
-      rows[0]
-        .replace(/\"/g,"")
-        .trim();
+      const pin =
+        rows[0]
+          .replace(/\"/g,"")
+          .trim();
 
       document
         .getElementById("currentPin")
@@ -298,17 +292,18 @@ function sanitize(str){
     console.log(err);
   }
 }
-  
+
 async function loadRequests(){
 
   try{
 
-    const SHEET_CSV_URL =
-    "https://docs.google.com/spreadsheets/d/XXXX/export?format=tsv";
+    const response =
+      await fetch(SHEET_URL);
 
-    const csv = await response.text();
+    const tsv =
+      await response.text();
 
-    const rows = csv
+    const rows = tsv
       .split("\n")
       .slice(1)
       .filter(row => row.trim() !== "");
@@ -317,117 +312,111 @@ async function loadRequests(){
 
     rows.forEach((row,index)=>{
 
-     const actualRow = index + 2;
+      const actualRow = index + 2;
 
-    const cols = row.split("\t");
+      const cols = row.split("\t");
 
-    const timestamp =
-      (cols[0] || "")
-        .replace(/\"/g,"");
+      const timestamp =
+        (cols[0] || "")
+          .replace(/\"/g,"")
+          .trim();
 
-    const name =
-      (cols[1] || "Tuntematon")
-        .replace(/\"/g,"");
+      const name =
+        (cols[1] || "Tuntematon")
+          .replace(/\"/g,"")
+          .trim();
 
-    const artist =
-      (cols[2] || "")
-        .replace(/\"/g,"");
+      const artist =
+        (cols[2] || "")
+          .replace(/\"/g,"")
+          .trim();
 
-    const song =
-      (cols[3] || "")
-        .replace(/\"/g,"");
+      const song =
+        (cols[3] || "")
+          .replace(/\"/g,"")
+          .trim();
 
-    const message =
-      (cols[4] || "")
-        .replace(/\"/g,"");
+      const message =
+        (cols[4] || "")
+          .replace(/\"/g,"")
+          .trim();
 
-    const status =
-      (cols[5] || "Jonossa")
-        .replace(/\"/g,"")
-        .replace(/\r/g,"")
-        .trim()
-        .toLowerCase();
+      const status =
+        (cols[5] || "Jonossa")
+          .replace(/\"/g,"")
+          .replace(/\r/g,"")
+          .trim();
 
-     if(
-      status === "piilotettu" ||
-      hiddenRows.includes(actualRow)
-    ){
-      return;
-    }
+      if(status === "Piilotettu"){
+        return;
+      }
 
-      const card = document.createElement("div");
+      const card =
+        document.createElement("div");
 
       card.className = "request-card";
 
-      card.draggable = true;
+      card.innerHTML = `
 
-    card.innerHTML = `
+        <div class="request-top">
 
-  <div class="request-top">
+          <div>
+            <div class="song">
+              🎵 ${sanitize(song)}
+            </div>
 
-    <div>
-      <div class="song">
-        🎵 ${sanitize(song)}
-      </div>
+            <div class="artist">
+              ${sanitize(artist)}
+            </div>
+          </div>
 
-      <div class="artist">
-        ${sanitize(artist)}
-      </div>
-    </div>
+          <div class="timestamp">
+            ${timestamp}
+          </div>
 
-    <div class="timestamp">
-      ${timestamp}
-    </div>
+        </div>
 
-  </div>
+        <div class="request-name">
+          👤 ${sanitize(name)}
+        </div>
 
-  <div class="request-name">
-    👤 ${sanitize(name)}
-  </div>
+        <div class="request-message">
+          📣 ${sanitize(message || "Ei viestiä")}
+        </div>
 
-  <div class="request-message">
-    📣 ${sanitize(message || "Ei viestiä")}
-  </div>
+        <div class="status-buttons">
 
-  <div class="status-buttons">
+          <button
+            class="status-btn queue-btn ${status === "Jonossa" ? "active" : ""}"
+            onclick="setStatus(this,'Jonossa',${actualRow})"
+          >
+            🟡 Jonossa
+          </button>
 
-  <button
-    class="status-btn queue-btn ${status === "Jonossa" ? "active" : ""}"
-    onclick="setStatus(this,'Jonossa',${actualRow})"
-  >
-    🟡 Jonossa
-  </button>
+          <button
+            class="status-btn played-btn ${status === "Soitettu" ? "active" : ""}"
+            onclick="setStatus(this,'Soitettu',${actualRow})"
+          >
+            ✅ Soitettu
+          </button>
 
-  <button
-    class="status-btn played-btn ${status === "Soitettu" ? "active" : ""}"
-    onclick="setStatus(this,'Soitettu',${actualRow})"
-  >
-    ✅ Soitettu
-  </button>
+          <button
+            class="status-btn skip-btn ${status === "Skipattu" ? "active" : ""}"
+            onclick="setStatus(this,'Skipattu',${actualRow})"
+          >
+            ⛔ Skipattu
+          </button>
 
-  <button
-    class="status-btn skip-btn ${status === "Skipattu" ? "active" : ""}"
-    onclick="setStatus(this,'Skipattu',${actualRow})"
-  >
-    ⛔ Skipattu
-  </button>
+          <button
+            class="status-btn hide-btn"
+            onclick="hideMessage(this,${actualRow})"
+          >
+            🗑️ Piilota
+          </button>
 
-  <button
-    class="status-btn"
-    style="
-      background:#444;
-      color:white;
-    "
-    onclick="hideMessage(${actualRow})"
-  >
-    🗑️ Piilota
-  </button>
+        </div>
 
-</div>
-
-`;
-
-      addDragEvents(card);
+      `;
 
       requestFeed.appendChild(card);
 
@@ -481,73 +470,10 @@ async function setStatus(button,status,row){
   }catch(err){
 
     console.log(err);
-
-    alert("❌ Status päivitys epäonnistui");
   }
 }
 
-let draggedItem = null;
-
-function addDragEvents(card){
-
-  card.addEventListener("dragstart",()=>{
-
-    draggedItem = card;
-
-    card.classList.add("dragging");
-  });
-
-  card.addEventListener("dragend",()=>{
-
-    card.classList.remove("dragging");
-  });
-
-  card.addEventListener("dragover",(e)=>{
-
-    e.preventDefault();
-
-    const afterElement = getDragAfterElement(requestFeed,e.clientY);
-
-    if(afterElement == null){
-
-      requestFeed.appendChild(draggedItem);
-
-    }else{
-
-      requestFeed.insertBefore(draggedItem,afterElement);
-    }
-  });
-}
-
-function getDragAfterElement(container,y){
-
-  const draggableElements = [...container.querySelectorAll('.request-card:not(.dragging)')];
-
-  return draggableElements.reduce((closest,child)=>{
-
-    const box = child.getBoundingClientRect();
-
-    const offset = y - box.top - box.height / 2;
-
-    if(offset < 0 && offset > closest.offset){
-
-      return {
-        offset: offset,
-        element: child
-      };
-
-    }else{
-
-      return closest;
-    }
-
-  },{
-    offset:Number.NEGATIVE_INFINITY
-  }).element;
-}
-
-
-  async function hideMessage(row){
+async function hideMessage(button,row){
 
   const confirmHide = confirm(
     "Piilotetaanko tämä viesti feedistä?"
@@ -557,28 +483,17 @@ function getDragAfterElement(container,y){
     return;
   }
 
-  hiddenRows.push(row);
-
-  localStorage.setItem(
-  "hiddenRows",
-  JSON.stringify(hiddenRows)
-);
-
   const card =
-    event.target.closest(".request-card");
+    button.closest(".request-card");
 
   if(card){
 
     card.style.transition = "0.25s";
-
     card.style.opacity = "0";
-
     card.style.transform = "scale(0.95)";
 
     setTimeout(()=>{
-
       card.remove();
-
     },250);
   }
 
@@ -607,10 +522,9 @@ function getDragAfterElement(container,y){
   }catch(err){
 
     console.log(err);
-
-    alert("❌ Piilotus epäonnistui");
   }
 }
+
 async function endNight(){
 
   const confirmAction = confirm(
@@ -630,8 +544,11 @@ async function endNight(){
       mode:"no-cors",
 
       body: JSON.stringify({
+
         action:"archive",
+
         secret:"LEXWILLER2025"
+
       })
 
     });
@@ -639,7 +556,10 @@ async function endNight(){
     alert("🧹 Queue arkistoitu onnistuneesti");
 
     setTimeout(()=>{
+
+      loadPin();
       loadRequests();
+
     },1500);
 
   }catch(err){
@@ -651,18 +571,16 @@ async function endNight(){
 }
 
 loadPin();
-
 loadRequests();
 
 setInterval(()=>{
 
   loadPin();
-
   loadRequests();
 
 },15000);
 
 </script>
-
 </body>
 </html>
+```
