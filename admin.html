@@ -340,10 +340,12 @@ async function loadRequests(){
     const status =
       (cols[5] || "Jonossa")
         .replace(/\"/g,"")
-        .trim();
+        .replace(/\r/g,"")
+        .trim()
+        .toLowerCase();
 
-    if(
-      status === "Piilotettu" ||
+     if(
+      status === "piilotettu" ||
       hiddenRows.includes(actualRow)
     ){
       return;
