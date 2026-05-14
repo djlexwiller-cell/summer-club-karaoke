@@ -927,7 +927,7 @@ loadPin();
 
     const response =
       await fetch(
-        "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=SETTINGS_GID"
+        "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1934620115"
       );
 
     const text =
@@ -948,17 +948,15 @@ loadPin();
           .trim()
           .toUpperCase();
 
-      if(value !== "ON"){
+      const messageButton =
+        document.querySelectorAll("button")[2];
 
-        const messageButton =
-          document.querySelector(
-            'button[onclick="openScreen(\\'messageScreen\\')"]'
-          );
+      if(messageButton){
 
-        if(messageButton){
-
-          messageButton.style.display = "none";
-        }
+        messageButton.style.display =
+          value === "ON"
+            ? "block"
+            : "none";
       }
     }
 
