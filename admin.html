@@ -530,7 +530,7 @@ async function hideMessage(button,row){
 
 let messagesEnabled = true;
 
-async function loadMessageToggle(){
+async function loadMessageToggle(){   
 
   try{
 
@@ -543,7 +543,7 @@ async function loadMessageToggle(){
       await response.text();
 
     const rows =
-      text.split("\\n");
+      text.split("\n");
 
     if(rows[0]){
 
@@ -551,9 +551,11 @@ async function loadMessageToggle(){
         rows[0].split(",");
 
       const value =
-        cols[1]
+        (cols[1] || "ON")
           .replace(/\"/g,"")
-          .trim();
+          .replace(/\r/g,"")
+          .trim()
+          .toUpperCase();
 
       messagesEnabled =
         value === "ON";
@@ -571,7 +573,7 @@ async function loadMessageToggle(){
 
     console.log(err);
   }
-}  
+}
 
 async function toggleMessages(){
 
