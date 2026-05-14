@@ -889,7 +889,7 @@ async function loadSettings(){
       await response.text();
 
     const rows =
-      text.split("\\n");
+      text.split("\n");
 
     if(rows[0]){
 
@@ -904,11 +904,12 @@ async function loadSettings(){
       if(enabled !== "ON"){
 
         const messageButton =
-        document.querySelectorAll("button")[2];
+          document.querySelectorAll("button")[2];
 
-      if(messageButton){
+        if(messageButton){
 
-        messageButton.style.display = "none";
+          messageButton.style.display = "none";
+        }
       }
     }
 
