@@ -530,6 +530,24 @@ function getDragAfterElement(container,y){
     return;
   }
 
+  const card =
+    event.target.closest(".request-card");
+
+  if(card){
+
+    card.style.transition = "0.25s";
+
+    card.style.opacity = "0";
+
+    card.style.transform = "scale(0.95)";
+
+    setTimeout(()=>{
+
+      card.remove();
+
+    },250);
+  }
+
   try{
 
     await fetch(APPS_SCRIPT_URL, {
@@ -551,8 +569,6 @@ function getDragAfterElement(container,y){
       })
 
     });
-
-    loadRequests();
 
   }catch(err){
 
