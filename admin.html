@@ -313,20 +313,36 @@ async function loadRequests(){
 
     rows.forEach((row,index)=>{
 
-      const actualRow = index + 2;
-      const cols = row.match(/(\".*?\"|[^\",\\s]+)(?=\\s*,|\\s*$)/g);
-      const timestamp = (cols[0] || "").replace(/\"/g,"");
-      const name = (cols[1] || "Tuntematon").replace(/\"/g,"");
-      const artist = (cols[2] || "").replace(/\"/g,"");
-      const song = (cols[3] || "").replace(/\"/g,"");
-      const message = (cols[4] || "").replace(/\"/g,"");
+     const actualRow = index + 2;
 
-      const status =
-        (cols[5] || "Jonossa")
-          .replace(/\"/g,"")
-          .trim();
+    const cols = row.split(",");
 
-     if(
+    const timestamp =
+      (cols[0] || "")
+        .replace(/\"/g,"");
+
+    const name =
+      (cols[1] || "Tuntematon")
+        .replace(/\"/g,"");
+
+    const artist =
+      (cols[2] || "")
+        .replace(/\"/g,"");
+
+    const song =
+      (cols[3] || "")
+        .replace(/\"/g,"");
+
+    const message =
+      (cols[4] || "")
+        .replace(/\"/g,"");
+
+    const status =
+      (cols[5] || "Jonossa")
+        .replace(/\"/g,"")
+        .trim();
+
+    if(
       status === "Piilotettu" ||
       hiddenRows.includes(actualRow)
     ){
@@ -534,9 +550,9 @@ function getDragAfterElement(container,y){
   if(!confirmHide){
     return;
   }
-    
-    hiddenRows.push(row);
-    
+
+  hiddenRows.push(row);
+
   const card =
     event.target.closest(".request-card");
 
