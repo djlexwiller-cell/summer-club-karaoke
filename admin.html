@@ -196,6 +196,14 @@ button{
 
     <div class="controls">
 
+      <button
+        id="messageToggleButton"
+        class="refresh"
+        onclick="toggleMessages()"
+      >
+        💬 DJ Messages: ON
+      </button>
+
       <button class="refresh" onclick="loadRequests()">
         🔄 Refresh Queue
       </button>
@@ -552,6 +560,82 @@ async function endNight(){
 
     setTimeout(()=>{
 
+      let messagesEnabled = true;
+
+async function loadMessageToggle(){
+
+  try{
+
+    const response =
+      await fetch(
+        "https://docs.google.com/spreadsheets/d/1ShQaz600hsbEMrDqYThFln7rs34lu4LlnEUH4C3Q6t4/export?format=csv&gid=1934620115"
+      );
+
+    const text =
+      await response.text();
+
+    const rows =
+      text.split("\\n");
+
+    if(rows[0]){
+
+      const cols =
+        rows[0].split(",");
+
+      messagesEnabled =
+        cols[1]
+          .replace(/\"/g,"")
+          .trim() === "ON";
+
+      updateToggleButton();
+    }
+
+  }catch(err){
+
+    console.log(err);
+  }
+}
+
+function updateToggleButton(){
+
+  const btn =
+    document.getElementById("messageToggleButton");
+
+  btn.innerText =
+    messagesEnabled
+      ? "💬 DJ Messages: ON"
+      : "💬 DJ Messages: OFF";
+}
+
+async function toggleMessages(){
+
+  messagesEnabled =
+    !messagesEnabled;
+
+  updateToggleButton();
+
+  await fetch(APPS_SCRIPT_URL, {
+
+    method:"POST",
+
+    mode:"no-cors",
+
+    body: JSON.stringify({
+
+      action:"toggleMessages",
+
+      secret:"LEXWILLER2025",
+
+      value:
+        messagesEnabled
+          ? "ON"
+          : "OFF"
+
+    })
+
+  });
+}
+      
       loadPin();
       loadRequests();
 
