@@ -181,7 +181,7 @@ button:hover{
 
 <div class="container">
 
-<h1>🎤 SummerClub Karaoke Lista</h1>
+<h1>🎤 Summer Club Karaoke Lista</h1>
 
 <div class="subtitle">
 Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
@@ -200,6 +200,29 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
   <button onclick="toggleSuggestionBox()" class="suggest-btn">
 ➕ Ehdota uutta bilekaraokebiisiä
 </button>
+
+ <button onclick="toggleMessageBox()" class="suggest-btn">
+💬 Lähetä DJ:lle viesti
+</button>
+
+<div id="messageBox" style="display:none; margin-top:20px;">
+
+  <input
+    type="text"
+    id="djMessageName"
+    placeholder="Nimi (optional)"
+  />
+
+  <textarea
+    id="djMessageText"
+    placeholder="Kirjoita viesti DJ:lle 😄"
+  ></textarea>
+
+  <button onclick="sendDJMessage()">
+    📣 Lähetä viesti
+  </button>
+
+</div>
 
 <div id="suggestionBox" style="display:none; margin-top:20px;">
 
@@ -531,6 +554,21 @@ localStorage.setItem(
   }
 }
 
+ function toggleMessageBox(){
+
+  const box =
+    document.getElementById("messageBox");
+
+  if(box.style.display === "none"){
+
+    box.style.display = "block";
+
+  }else{
+
+    box.style.display = "none";
+  }
+}
+
 function toggleSuggestionBox(){
 
   const box =
@@ -711,6 +749,56 @@ loadPin();
   document
     .getElementById("songSelectionScreen")
     .style.display = "block";
+}
+
+ async function sendDJMessage(){
+
+  const name =
+    document.getElementById("djMessageName").value;
+
+  const message =
+    document.getElementById("djMessageText").value;
+
+  if(message.trim() === ""){
+
+    alert("Kirjoita viesti 😄");
+
+    return;
+  }
+
+  try{
+
+    await fetch(WEBHOOK_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body:JSON.stringify({
+
+        action:"djmessage",
+
+        name:name,
+
+        message:message
+
+      })
+
+    });
+
+    alert("📣 Viesti lähetetty DJ:lle");
+
+    document.getElementById("djMessageName").value = "";
+    document.getElementById("djMessageText").value = "";
+
+    document.getElementById("messageBox").style.display = "none";
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Lähetys epäonnistui");
+  }
 }
  
 renderSongs();
