@@ -320,7 +320,9 @@ async function loadRequests(){
       const artist = cols[2] || "";
       const song = cols[3] || "";
       const message = cols[4] || "";
-      const status = cols[5] || "Jonossa";
+      const status = (cols[5] || "Jonossa")
+        .replace(/\"/g,"")
+        .trim();
 
         if(status === "Piilotettu"){
   return;
