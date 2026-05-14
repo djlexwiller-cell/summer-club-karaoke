@@ -195,41 +195,9 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
   placeholder="Hae artistia tai kappaletta..."
 />
 
-<div id="selectedSong"></div>
-
 <div id="songs"></div>
 
- </div>
-
-<div id="requestScreen" style="display:none;">
-
- <button
-  onclick="backToSongs()"
-  style="margin-bottom:20px;"
->
-  ← Vaihda biisi
-</button>
-
-<h2>🙋 Oma nimi</h2>
-
-<input
-  type="text"
-  id="name"
-  placeholder="Kirjoita nimesi..."
-/>
-
-<h2>📣 Terveiset DJ:lle</h2>
-
-<textarea
-  id="message"
-  placeholder="Shoutoutit, synttärit, terveiset..."
-></textarea>
-
-<button onclick="sendRequest()">
-🎵 Lähetä biisitoive DJ:lle 🎵
-</button>
-
- <button onclick="toggleSuggestionBox()" class="suggest-btn">
+  <button onclick="toggleSuggestionBox()" class="suggest-btn">
 ➕ Ehdota uutta bilekaraokebiisiä
 </button>
 
@@ -257,6 +225,37 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
   </button>
 
 </div>
+
+ </div>
+
+<div id="requestScreen" style="display:none;">
+
+ <button
+  onclick="backToSongs()"
+  style="margin-bottom:20px;"
+>
+  ← Vaihda biisi
+</button>
+ <div id="selectedSong"></div>
+
+<h2>🙋 Oma nimi</h2>
+
+<input
+  type="text"
+  id="name"
+  placeholder="Kirjoita nimesi..."
+/>
+
+<h2>📣 Terveiset DJ:lle</h2>
+
+<textarea
+  id="message"
+  placeholder="Shoutoutit, synttärit, terveiset..."
+></textarea>
+
+<button onclick="sendRequest()">
+🎵 Lähetä biisitoive DJ:lle 🎵
+</button>
 
 <div class="success" id="successBox">
 🔥 Biisitoive DJ:lle lähetetty 🔥
@@ -433,7 +432,10 @@ if(lastRequest){
 
   };
 
-  const button = document.querySelector("button");
+ const button =
+  document.querySelector(
+    'button[onclick="sendRequest()"]'
+  );
 
     button.disabled = true;
 
