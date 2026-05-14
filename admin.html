@@ -528,6 +528,52 @@ async function hideMessage(button,row){
   }
 }
 
+let messagesEnabled = true;
+
+async function toggleMessages(){
+
+  messagesEnabled =
+    !messagesEnabled;
+
+  const button =
+    document.getElementById("messageToggleButton");
+
+  button.innerText =
+    messagesEnabled
+      ? "💬 DJ Messages: ON"
+      : "💬 DJ Messages: OFF";
+
+  try{
+
+    await fetch(APPS_SCRIPT_URL, {
+
+      method:"POST",
+
+      mode:"no-cors",
+
+      body: JSON.stringify({
+
+        action:"toggleMessages",
+
+        secret:"LEXWILLER2025",
+
+        value:
+          messagesEnabled
+            ? "ON"
+            : "OFF"
+
+      })
+
+    });
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("❌ Message toggle epäonnistui");
+  }
+}  
+
 async function endNight(){
 
   const confirmAction = confirm(
