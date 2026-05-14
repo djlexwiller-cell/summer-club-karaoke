@@ -187,6 +187,8 @@ button:hover{
 Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
 </div>
 
+<div id="songSelectionScreen">
+ 
 <input
   type="text"
   id="search"
@@ -196,6 +198,17 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
 <div id="selectedSong"></div>
 
 <div id="songs"></div>
+
+ </div>
+
+<div id="requestScreen" style="display:none;">
+
+ <button
+  onclick="backToSongs()"
+  style="margin-bottom:20px;"
+>
+  ← Vaihda biisi
+</button>
 
 <h2>🙋 Oma nimi</h2>
 
@@ -248,6 +261,8 @@ Hae kappale tai artisti ja lähetä biisitoive DJ:lle 🔥
 <div class="success" id="successBox">
 🔥 Biisitoive DJ:lle lähetetty 🔥
 </div>
+
+ </div>
 
 <div class="footer">
 Summer Club Karaoke Kappaleet, ei nyyhkylauluja vaan iloisempaa menoa ❤️
@@ -325,6 +340,14 @@ function renderSongs(filter=""){
     `;
 
     div.onclick = () => {
+
+       document
+       .getElementById("songSelectionScreen")
+       .style.display = "none";
+
+      document
+       .getElementById("requestScreen")
+       .style.display = "block";
 
       selectedSong = item;
 
@@ -460,6 +483,14 @@ localStorage.setItem(
       );
 
     selectedSong = null;
+
+     document
+      .getElementById("requestScreen")
+      .style.display = "none";
+
+    document
+     .getElementById("songSelectionScreen")
+     .style.display = "block";
 
     renderSongs("");
 
@@ -652,6 +683,17 @@ async function checkPin(){
 }
 
 loadPin();
+
+ function backToSongs(){
+
+  document
+    .getElementById("requestScreen")
+    .style.display = "none";
+
+  document
+    .getElementById("songSelectionScreen")
+    .style.display = "block";
+}
  
 renderSongs();
     
