@@ -8,6 +8,11 @@
 
 <style>
 
+html,
+body{
+  overflow-x:hidden;
+}
+  
 body{
   background:
     linear-gradient(
@@ -94,6 +99,13 @@ button:hover{
   max-height:65vh;
   overflow-y:auto;
   padding-right:5px;
+
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+#songs::-webkit-scrollbar{
+  display:none;
 }
 
 .song{
