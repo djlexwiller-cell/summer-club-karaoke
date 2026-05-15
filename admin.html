@@ -167,6 +167,13 @@ h1{
   gap:10px;
 }
 
+.battle-grid{
+  display:grid;
+  grid-template-columns:auto 1fr 1fr;
+  gap:10px;
+  align-items:center;
+}
+
 select,
 input,
 textarea{
@@ -182,6 +189,10 @@ textarea{
 textarea{
   min-height:68px;
   resize:vertical;
+}
+
+input[type="checkbox"]{
+  width:auto;
 }
 
 .request-feed{
@@ -220,6 +231,14 @@ textarea{
   font-size:14px;
   font-weight:900;
   vertical-align:middle;
+}
+
+.battle-pick-btn{
+  min-height:32px;
+  padding:6px 9px;
+  border-radius:7px;
+  background:#6d28d9;
+  font-size:12px;
 }
 
 .artist{
@@ -295,7 +314,8 @@ textarea{
   }
 
   .live-grid,
-  .pick-grid{
+  .pick-grid,
+  .battle-grid{
     grid-template-columns:1fr;
   }
 
@@ -360,6 +380,20 @@ textarea{
         <input id="pick2Subtitle" type="text" placeholder="Nosto 2: artisti tai lisäinfo" />
         <input id="pick3Title" type="text" placeholder="Nosto 3: kappale tai teema" />
         <input id="pick3Subtitle" type="text" placeholder="Nosto 3: artisti tai lisäinfo" />
+      </div>
+
+      <div class="live-panel-title">Battle</div>
+
+      <div class="battle-grid">
+        <label>
+          <input id="battleActive" type="checkbox" />
+          Aktiivinen
+        </label>
+        <input id="battleATitle" type="text" placeholder="Battle A: kappale" />
+        <input id="battleASubtitle" type="text" placeholder="Battle A: artisti" />
+        <span></span>
+        <input id="battleBTitle" type="text" placeholder="Battle B: kappale" />
+        <input id="battleBSubtitle" type="text" placeholder="Battle B: artisti" />
       </div>
 
       <button type="button" class="btn-green" onclick="saveLiveSettings()">Tallenna live-asetukset</button>
@@ -463,6 +497,14 @@ function setFieldValue(id,value){
   }
 }
 
+function setCheckedValue(id,value){
+  const field = document.getElementById(id);
+
+  if(field){
+    field.checked = String(value || "OFF").toUpperCase() === "ON";
+  }
+}
+
 function loadLiveSettingsToForm(settings){
   setFieldValue("appMode", settings.APP_MODE || "KARAOKE");
   setFieldValue("liveMessage", settings.LIVE_MESSAGE || "");
@@ -472,7 +514,19 @@ function loadLiveSettingsToForm(settings){
   setFieldValue("pick2Subtitle", settings.PICK_2_SUBTITLE || "");
   setFieldValue("pick3Title", settings.PICK_3_TITLE || "");
   setFieldValue("pick3Subtitle", settings.PICK_3_SUBTITLE || "");
+  setCheckedValue("battleActive", settings.BATTLE_ACTIVE || "OFF");
+  setFieldValue("battleATitle", settings.BATTLE_A_TITLE || "");
+  setFieldValue("battleASubtitle", settings.BATTLE_A_SUBTITLE || "");
+  setFieldValue("battleBTitle", settings.BATTLE_B_TITLE || "");
+  setFieldValue("battleBSubtitle", settings.BATTLE_B_SUBTITLE || "");
   liveSettingsLoaded = true;
+}
+
+function setBattleOption(option,artist,song){
+  const prefix = option === "A" ? "battleA" : "battleB";
+  setFieldValue(prefix + "Title", song || "");
+  setFieldValue(prefix + "Subtitle", artist || "");
+  setCheckedValue("battleActive", "ON");
 }
 
 function getAdminCode(){
@@ -606,6 +660,8 @@ async function loadRequests(){
         <div class="request-message">${escapeHtml(message || "Ei viestiä")}</div>
 
         <div class="status-buttons">
+          <button type="button" class="battle-pick-btn" onclick="setBattleOption('A',decodeURIComponent('${encodeURIComponent(artist)}'),decodeURIComponent('${encodeURIComponent(song)}'))">Battle A</button>
+          <button type="button" class="battle-pick-btn" onclick="setBattleOption('B',decodeURIComponent('${encodeURIComponent(artist)}'),decodeURIComponent('${encodeURIComponent(song)}'))">Battle B</button>
           <button type="button" class="status-btn btn-yellow ${status === "Jonossa" ? "active" : ""}" onclick="setStatus(this,'Jonossa',${actualRow})">Jonossa</button>
           <button type="button" class="status-btn btn-green ${status === "Soitettu" ? "active" : ""}" onclick="setStatus(this,'Soitettu',${actualRow})">Soitettu</button>
           <button type="button" class="status-btn btn-red ${status === "Skipattu" ? "active" : ""}" onclick="setStatus(this,'Skipattu',${actualRow})">Skipattu</button>
@@ -673,7 +729,18 @@ async function saveLiveSettings(){
           title:document.getElementById("pick3Title").value,
           subtitle:document.getElementById("pick3Subtitle").value
         }
-      ]
+      ],
+      battle:{
+        active:document.getElementById("battleActive").checked,
+        a:{
+          title:document.getElementById("battleATitle").value,
+          subtitle:document.getElementById("battleASubtitle").value
+        },
+        b:{
+          title:document.getElementById("battleBTitle").value,
+          subtitle:document.getElementById("battleBSubtitle").value
+        }
+      }
     });
 
     alert("Live-asetukset tallennettu.");
