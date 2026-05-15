@@ -151,6 +151,11 @@ textarea{
   margin-top:18px;
 }
 
+.battle{
+  display:none;
+  margin-top:18px;
+}
+
 .picks-title{
   margin:0 0 10px;
   color:var(--muted);
@@ -161,6 +166,12 @@ textarea{
 
 .pick-list{
   display:grid;
+  gap:10px;
+}
+
+.battle-list{
+  display:grid;
+  grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
@@ -188,6 +199,17 @@ textarea{
   margin-top:4px;
   color:var(--muted);
   font-size:14px;
+}
+
+.vote-count{
+  display:inline-flex;
+  margin-top:10px;
+  padding:4px 9px;
+  border-radius:999px;
+  background:rgba(125,255,156,0.14);
+  color:#9dffb7;
+  font-size:14px;
+  font-weight:900;
 }
 
 .secondary{
@@ -349,6 +371,10 @@ textarea{
   button{
     width:100%;
   }
+
+  .battle-list{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -382,6 +408,11 @@ textarea{
       <div class="picks-title">DJ suosittelee</div>
       <div class="pick-list" id="pickList"></div>
     </div>
+
+    <div class="battle" id="battlePanel">
+      <div class="picks-title">Battle: mitä seuraavaksi?</div>
+      <div class="battle-list" id="battleList"></div>
+    </div>
   </section>
 
   <section id="songScreen" class="screen">
@@ -395,7 +426,7 @@ textarea{
   </section>
 
   <section id="requestScreen" class="screen">
-    <button type="button" class="back" id="changeSongButton" onclick="backToSongs()">Vaihda biisi</button>
+    <button type="button" class="back" id="changeSongButton" onclick="handleRequestBack()">Vaihda biisi</button>
     <div id="selectedSong" class="selected-song"></div>
     <div id="freeRequestFields">
       <div class="field">
@@ -482,7 +513,11 @@ let requestMode = "KARAOKE";
 let appSettings = {
   mode:"KARAOKE",
   liveMessage:"",
-  picks:[]
+  picks:[],
+  battle:{
+    active:false,
+    options:[]
+  }
 };
 
 function escapeHtml(value = ""){
@@ -595,7 +630,8 @@ function setRequestScreenMode(mode,preset){
   const sendButton = document.getElementById("sendRequestButton");
 
   freeFields.style.display = isFree ? "block" : "none";
-  changeButton.style.display = isFree ? "none" : "inline-block";
+  changeButton.style.display = "inline-block";
+  changeButton.innerText = isFree ? "Takaisin" : "Vaihda biisi";
   sendButton.innerText = isFree ? "Lähetä toive DJ:lle" : "Lähetä biisitoive DJ:lle";
 
   if(isFree){
@@ -614,6 +650,15 @@ function openRequestFlow(){
   }
 
   openScreen("songScreen");
+}
+
+function handleRequestBack(){
+  if(requestMode !== "KARAOKE"){
+    goHome();
+    return;
+  }
+
+  backToSongs();
 }
 
 function backToSongs(){
@@ -777,6 +822,40 @@ function renderPicks(picks){
   panel.style.display = "block";
 }
 
+function renderBattle(battle){
+  const panel = document.getElementById("battlePanel");
+  const list = document.getElementById("battleList");
+  const options = battle && battle.active
+    ? battle.options.filter(option => option.title || option.subtitle)
+    : [];
+
+  list.innerHTML = "";
+
+  if(options.length < 2){
+    panel.style.display = "none";
+    return;
+  }
+
+  options.slice(0,2).forEach(option => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "pick-card";
+    button.innerHTML = `
+      <div class="pick-name">${escapeHtml(option.title || option.subtitle)}</div>
+      ${option.subtitle ? `<div class="pick-note">${escapeHtml(option.subtitle)}</div>` : ""}
+      <span class="vote-count">${Number(option.votes || 0)} ääntä</span>
+    `;
+
+    button.addEventListener("click",() => {
+      voteBattle(option.id);
+    });
+
+    list.appendChild(button);
+  });
+
+  panel.style.display = "block";
+}
+
 function applySettings(settings){
   const mode = (settings.APP_MODE || "KARAOKE").toUpperCase();
 
@@ -796,12 +875,30 @@ function applySettings(settings){
         title:settings.PICK_3_TITLE || "",
         subtitle:settings.PICK_3_SUBTITLE || ""
       }
-    ]
+    ],
+    battle:{
+      active:(settings.BATTLE_ACTIVE || "OFF").toUpperCase() === "ON",
+      options:[
+        {
+          id:"A",
+          title:settings.BATTLE_A_TITLE || "",
+          subtitle:settings.BATTLE_A_SUBTITLE || "",
+          votes:Number(settings.BATTLE_A_VOTES || 0)
+        },
+        {
+          id:"B",
+          title:settings.BATTLE_B_TITLE || "",
+          subtitle:settings.BATTLE_B_SUBTITLE || "",
+          votes:Number(settings.BATTLE_B_VOTES || 0)
+        }
+      ]
+    }
   };
 
   applyMode(appSettings.mode);
   renderLiveMessage(appSettings.liveMessage);
   renderPicks(appSettings.picks);
+  renderBattle(appSettings.battle);
 }
 
 function getCooldownSeconds(){
@@ -925,6 +1022,33 @@ async function sendRequest(event){
     await new Promise(resolve => setTimeout(resolve,1400));
     document.getElementById("successBox").style.display = "none";
   });
+}
+
+async function voteBattle(option){
+  const battleKey = [
+    appSettings.battle.options[0] && appSettings.battle.options[0].title,
+    appSettings.battle.options[1] && appSettings.battle.options[1].title
+  ].join("|");
+  const savedVoteKey = "battleVote:" + battleKey;
+
+  if(localStorage.getItem(savedVoteKey)){
+    alert("Olet jo äänestänyt tässä battlessa.");
+    return;
+  }
+
+  try{
+    await postToAppsScript({
+      action:"voteBattle",
+      clientId:getClientId(),
+      option
+    });
+
+    localStorage.setItem(savedVoteKey, option);
+    await loadMessageToggle();
+  }catch(err){
+    console.error(err);
+    alert(err.message || "Äänestys epäonnistui.");
+  }
 }
 
 async function sendSuggestion(event){
