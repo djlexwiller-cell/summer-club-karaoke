@@ -393,6 +393,7 @@ const API_USES_READABLE_JSON = true;
 const requestFeed = document.getElementById("requestFeed");
 
 let messagesEnabled = true;
+let liveSettingsLoaded = false;
 
 function escapeHtml(value = ""){
   return String(value)
@@ -460,6 +461,18 @@ function setFieldValue(id,value){
   if(field){
     field.value = value || "";
   }
+}
+
+function loadLiveSettingsToForm(settings){
+  setFieldValue("appMode", settings.APP_MODE || "KARAOKE");
+  setFieldValue("liveMessage", settings.LIVE_MESSAGE || "");
+  setFieldValue("pick1Title", settings.PICK_1_TITLE || "");
+  setFieldValue("pick1Subtitle", settings.PICK_1_SUBTITLE || "");
+  setFieldValue("pick2Title", settings.PICK_2_TITLE || "");
+  setFieldValue("pick2Subtitle", settings.PICK_2_SUBTITLE || "");
+  setFieldValue("pick3Title", settings.PICK_3_TITLE || "");
+  setFieldValue("pick3Subtitle", settings.PICK_3_SUBTITLE || "");
+  liveSettingsLoaded = true;
 }
 
 function getAdminCode(){
@@ -618,7 +631,7 @@ function updateToggleButton(){
   button.className = messagesEnabled ? "btn-blue" : "btn-gray";
 }
 
-async function loadMessageToggle(){
+async function loadMessageToggle(options = {}){
   try{
     const response = await fetch(MESSAGE_SETTINGS_URL);
     const text = await response.text();
@@ -631,14 +644,9 @@ async function loadMessageToggle(){
       "ON"
     ).toUpperCase() === "ON";
 
-    setFieldValue("appMode", settings.APP_MODE || "KARAOKE");
-    setFieldValue("liveMessage", settings.LIVE_MESSAGE || "");
-    setFieldValue("pick1Title", settings.PICK_1_TITLE || "");
-    setFieldValue("pick1Subtitle", settings.PICK_1_SUBTITLE || "");
-    setFieldValue("pick2Title", settings.PICK_2_TITLE || "");
-    setFieldValue("pick2Subtitle", settings.PICK_2_SUBTITLE || "");
-    setFieldValue("pick3Title", settings.PICK_3_TITLE || "");
-    setFieldValue("pick3Subtitle", settings.PICK_3_SUBTITLE || "");
+    if(options.forceLiveForm || !liveSettingsLoaded){
+      loadLiveSettingsToForm(settings);
+    }
 
     updateToggleButton();
   }catch(err){
@@ -669,7 +677,7 @@ async function saveLiveSettings(){
     });
 
     alert("Live-asetukset tallennettu.");
-    loadMessageToggle();
+    loadMessageToggle({ forceLiveForm:true });
   }catch(err){
     console.error(err);
     alert(err.message || "Live-asetusten tallennus epäonnistui.");
@@ -764,7 +772,11 @@ async function loadAll(){
 }
 
 loadAll();
-setInterval(loadAll,15000);
+setInterval(()=>{
+  loadPin();
+  loadMessageToggle();
+  loadRequests();
+},15000);
 </script>
 </body>
 </html>
