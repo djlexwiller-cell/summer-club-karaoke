@@ -139,6 +139,51 @@ h1{
   letter-spacing:3px;
 }
 
+.live-panel{
+  display:grid;
+  gap:12px;
+  margin-top:16px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:var(--panel);
+}
+
+.live-panel-title{
+  color:var(--muted);
+  font-size:14px;
+  font-weight:800;
+}
+
+.live-grid{
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:10px;
+}
+
+.pick-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+select,
+input,
+textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#111117;
+  color:var(--text);
+  font:inherit;
+  padding:10px 11px;
+}
+
+textarea{
+  min-height:68px;
+  resize:vertical;
+}
+
 .request-feed{
   padding:22px 0 34px;
 }
@@ -161,6 +206,20 @@ h1{
 .song{
   font-size:23px;
   font-weight:900;
+}
+
+.request-count{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  margin-left:8px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:rgba(255,47,143,0.22);
+  color:#ffd8eb;
+  font-size:14px;
+  font-weight:900;
+  vertical-align:middle;
 }
 
 .artist{
@@ -235,6 +294,11 @@ h1{
     flex:1 1 160px;
   }
 
+  .live-grid,
+  .pick-grid{
+    grid-template-columns:1fr;
+  }
+
   .status-buttons{
     flex-wrap:nowrap;
     gap:6px;
@@ -274,6 +338,31 @@ h1{
     <div class="pin-box">
       <div class="pin-title">Illan PIN</div>
       <div class="pin-value" id="currentPin">Ladataan...</div>
+    </div>
+
+    <div class="live-panel">
+      <div class="live-panel-title">Live-ohjaus</div>
+
+      <div class="live-grid">
+        <select id="appMode">
+          <option value="KARAOKE">Karaoke</option>
+          <option value="DJ">DJ</option>
+          <option value="PRIVATE">Private</option>
+        </select>
+
+        <textarea id="liveMessage" placeholder="DJ:n live-viesti käyttäjille..."></textarea>
+      </div>
+
+      <div class="pick-grid">
+        <input id="pick1Title" type="text" placeholder="Nosto 1: kappale tai teema" />
+        <input id="pick1Subtitle" type="text" placeholder="Nosto 1: artisti tai lisäinfo" />
+        <input id="pick2Title" type="text" placeholder="Nosto 2: kappale tai teema" />
+        <input id="pick2Subtitle" type="text" placeholder="Nosto 2: artisti tai lisäinfo" />
+        <input id="pick3Title" type="text" placeholder="Nosto 3: kappale tai teema" />
+        <input id="pick3Subtitle" type="text" placeholder="Nosto 3: artisti tai lisäinfo" />
+      </div>
+
+      <button type="button" class="btn-green" onclick="saveLiveSettings()">Tallenna live-asetukset</button>
     </div>
   </div>
 </header>
@@ -320,6 +409,57 @@ function cleanCell(value = ""){
 
 function parseCsvFirstRow(text){
   return (text.split("\n")[0] || "").split(",").map(cleanCell);
+}
+
+function parseCsvLine(line){
+  const values = [];
+  let value = "";
+  let insideQuotes = false;
+
+  for(let i = 0; i < line.length; i++){
+    const char = line[i];
+    const nextChar = line[i + 1];
+
+    if(char === '"' && nextChar === '"'){
+      value += '"';
+      i++;
+    }else if(char === '"'){
+      insideQuotes = !insideQuotes;
+    }else if(char === "," && !insideQuotes){
+      values.push(cleanCell(value));
+      value = "";
+    }else{
+      value += char;
+    }
+  }
+
+  values.push(cleanCell(value));
+  return values;
+}
+
+function parseSettings(text){
+  const settings = {};
+
+  text
+    .split("\n")
+    .map(row => row.trim())
+    .filter(Boolean)
+    .forEach(row => {
+      const cols = parseCsvLine(row);
+      if(cols[0]){
+        settings[cols[0].toUpperCase()] = cols[1] || "";
+      }
+    });
+
+  return settings;
+}
+
+function setFieldValue(id,value){
+  const field = document.getElementById(id);
+
+  if(field){
+    field.value = value || "";
+  }
 }
 
 function getAdminCode(){
@@ -423,6 +563,7 @@ async function loadRequests(){
       const song = cleanCell(cols[3]);
       const message = cleanCell(cols[4]);
       const status = cleanCell(cols[5] || "Jonossa");
+      const count = Number(cleanCell(cols[6]) || 1);
 
       if(status === "Piilotettu"){
         return;
@@ -430,7 +571,10 @@ async function loadRequests(){
 
       const titleHtml = song || artist
         ? `
-          <div class="song">${escapeHtml(song)}</div>
+          <div class="song">
+            ${escapeHtml(song)}
+            ${count > 1 ? `<span class="request-count">x${count}</span>` : ""}
+          </div>
           ${artist ? `<div class="artist">${escapeHtml(artist)}</div>` : ""}
         `
         : "";
@@ -478,11 +622,57 @@ async function loadMessageToggle(){
   try{
     const response = await fetch(MESSAGE_SETTINGS_URL);
     const text = await response.text();
-    const cols = parseCsvFirstRow(text);
-    messagesEnabled = (cols[1] || "ON").toUpperCase() === "ON";
+    const settings = parseSettings(text);
+    const fallback = parseCsvFirstRow(text);
+
+    messagesEnabled = (
+      settings.DJ_MESSAGES ||
+      fallback[1] ||
+      "ON"
+    ).toUpperCase() === "ON";
+
+    setFieldValue("appMode", settings.APP_MODE || "KARAOKE");
+    setFieldValue("liveMessage", settings.LIVE_MESSAGE || "");
+    setFieldValue("pick1Title", settings.PICK_1_TITLE || "");
+    setFieldValue("pick1Subtitle", settings.PICK_1_SUBTITLE || "");
+    setFieldValue("pick2Title", settings.PICK_2_TITLE || "");
+    setFieldValue("pick2Subtitle", settings.PICK_2_SUBTITLE || "");
+    setFieldValue("pick3Title", settings.PICK_3_TITLE || "");
+    setFieldValue("pick3Subtitle", settings.PICK_3_SUBTITLE || "");
+
     updateToggleButton();
   }catch(err){
     console.error(err);
+  }
+}
+
+async function saveLiveSettings(){
+  try{
+    await postAdminAction({
+      action:"updateSettings",
+      mode:document.getElementById("appMode").value,
+      liveMessage:document.getElementById("liveMessage").value,
+      picks:[
+        {
+          title:document.getElementById("pick1Title").value,
+          subtitle:document.getElementById("pick1Subtitle").value
+        },
+        {
+          title:document.getElementById("pick2Title").value,
+          subtitle:document.getElementById("pick2Subtitle").value
+        },
+        {
+          title:document.getElementById("pick3Title").value,
+          subtitle:document.getElementById("pick3Subtitle").value
+        }
+      ]
+    });
+
+    alert("Live-asetukset tallennettu.");
+    loadMessageToggle();
+  }catch(err){
+    console.error(err);
+    alert(err.message || "Live-asetusten tallennus epäonnistui.");
   }
 }
 
