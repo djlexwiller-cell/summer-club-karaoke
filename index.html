@@ -134,6 +134,62 @@ textarea{
   margin-top:22px;
 }
 
+.live-banner{
+  display:none;
+  margin:0 0 16px;
+  padding:14px 16px;
+  border:1px solid rgba(255,47,143,0.44);
+  border-radius:8px;
+  background:rgba(255,47,143,0.16);
+  color:#ffd8eb;
+  font-weight:800;
+  line-height:1.4;
+}
+
+.picks{
+  display:none;
+  margin-top:18px;
+}
+
+.picks-title{
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:14px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.pick-list{
+  display:grid;
+  gap:10px;
+}
+
+.pick-card{
+  width:100%;
+  min-height:auto;
+  padding:13px 14px;
+  border:1px solid var(--border);
+  border-left:4px solid var(--accent);
+  border-radius:8px;
+  background:rgba(23,23,28,0.94);
+  color:var(--text);
+  text-align:left;
+}
+
+.pick-card:hover{
+  background:rgba(33,33,42,0.96);
+}
+
+.pick-name{
+  font-weight:900;
+}
+
+.pick-note{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:14px;
+}
+
 .secondary{
   background:var(--panel-strong);
 }
@@ -212,6 +268,10 @@ textarea{
 .selected-song strong{
   display:block;
   margin-bottom:8px;
+}
+
+#freeRequestFields{
+  display:none;
 }
 
 .success{
@@ -305,21 +365,28 @@ textarea{
 
 <main class="app">
   <header class="brand">
-    <h1>BileKaraoke</h1>
-    <p class="lead">Valitse biisi, lähetä toive jonoon tai vinkkaa DJ:lle puuttuva kappale.</p>
+    <h1 id="appTitle">BileKaraoke</h1>
+    <p class="lead" id="appLead">Valitse biisi, lähetä toive jonoon tai vinkkaa DJ:lle puuttuva kappale.</p>
   </header>
 
   <section id="homeScreen" class="screen active">
+    <div class="live-banner" id="liveBanner"></div>
+
     <div class="actions">
-      <button type="button" onclick="openScreen('songScreen')">Lisää biisitoive jonoon</button>
-      <button type="button" class="secondary" onclick="openScreen('suggestionScreen')">Ehdota puuttuvaa kappaletta</button>
+      <button type="button" id="requestButton" onclick="openRequestFlow()">Lisää biisitoive jonoon</button>
+      <button type="button" class="secondary" id="suggestionButton" onclick="openScreen('suggestionScreen')">Ehdota puuttuvaa kappaletta</button>
       <button type="button" class="secondary" id="messageScreenButton" onclick="openScreen('messageScreen')">Lähetä DJ:lle viesti</button>
+    </div>
+
+    <div class="picks" id="picksPanel">
+      <div class="picks-title">DJ suosittelee</div>
+      <div class="pick-list" id="pickList"></div>
     </div>
   </section>
 
   <section id="songScreen" class="screen">
     <button type="button" class="back" onclick="goHome()">Takaisin</button>
-    <h1>Mitä lauletaan?</h1>
+    <h1 id="songScreenTitle">Mitä lauletaan?</h1>
     <div class="field">
       <label for="search">Hae artistia tai kappaletta</label>
       <input type="text" id="search" placeholder="Kirjoita hakusana..." autocomplete="off" />
@@ -328,8 +395,18 @@ textarea{
   </section>
 
   <section id="requestScreen" class="screen">
-    <button type="button" class="back" onclick="backToSongs()">Vaihda biisi</button>
+    <button type="button" class="back" id="changeSongButton" onclick="backToSongs()">Vaihda biisi</button>
     <div id="selectedSong" class="selected-song"></div>
+    <div id="freeRequestFields">
+      <div class="field">
+        <label for="freeArtist">Artisti</label>
+        <input type="text" id="freeArtist" placeholder="Artisti, jos tiedossa..." />
+      </div>
+      <div class="field">
+        <label for="freeSong">Kappale, genre tai fiilis</label>
+        <input type="text" id="freeSong" placeholder="Esim. Darude - Sandstorm, ysäriä, housea..." />
+      </div>
+    </div>
     <div class="field">
       <label for="name">Oma nimi</label>
       <input type="text" id="name" placeholder="Kirjoita nimesi..." autocomplete="name" />
@@ -338,13 +415,13 @@ textarea{
       <label for="message">Terveiset DJ:lle</label>
       <textarea id="message" placeholder="Shoutoutit, synttärit, terveiset..."></textarea>
     </div>
-    <button type="button" onclick="sendRequest(event)">Lähetä biisitoive DJ:lle</button>
+    <button type="button" id="sendRequestButton" onclick="sendRequest(event)">Lähetä biisitoive DJ:lle</button>
     <div class="success" id="successBox">Biisitoive lähetetty!</div>
   </section>
 
   <section id="suggestionScreen" class="screen">
     <button type="button" class="back" onclick="goHome()">Takaisin</button>
-    <h1>Ehdota biisiä</h1>
+    <h1 id="suggestionTitle">Ehdota biisiä</h1>
     <div class="field">
       <label for="suggestArtist">Artisti</label>
       <input type="text" id="suggestArtist" placeholder="Artisti" />
@@ -393,6 +470,7 @@ const MESSAGE_SETTINGS_URL =
 const API_USES_READABLE_JSON = true;
 
 const COOLDOWN_SECONDS = 30;
+const DJ_COOLDOWN_SECONDS = 120;
 
 const songsDiv = document.getElementById("songs");
 const searchInput = document.getElementById("search");
@@ -400,6 +478,12 @@ const searchInput = document.getElementById("search");
 let selectedSong = null;
 let currentPin = "";
 let savedScrollPosition = 0;
+let requestMode = "KARAOKE";
+let appSettings = {
+  mode:"KARAOKE",
+  liveMessage:"",
+  picks:[]
+};
 
 function escapeHtml(value = ""){
   return String(value)
@@ -408,6 +492,53 @@ function escapeHtml(value = ""){
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+}
+
+function cleanCell(value = ""){
+  return String(value).replace(/"/g,"").replace(/\r/g,"").trim();
+}
+
+function parseCsvLine(line){
+  const values = [];
+  let value = "";
+  let insideQuotes = false;
+
+  for(let i = 0; i < line.length; i++){
+    const char = line[i];
+    const nextChar = line[i + 1];
+
+    if(char === '"' && nextChar === '"'){
+      value += '"';
+      i++;
+    }else if(char === '"'){
+      insideQuotes = !insideQuotes;
+    }else if(char === "," && !insideQuotes){
+      values.push(cleanCell(value));
+      value = "";
+    }else{
+      value += char;
+    }
+  }
+
+  values.push(cleanCell(value));
+  return values;
+}
+
+function parseSettings(text){
+  const settings = {};
+
+  text
+    .split("\n")
+    .map(row => row.trim())
+    .filter(Boolean)
+    .forEach(row => {
+      const cols = parseCsvLine(row);
+      if(cols[0]){
+        settings[cols[0].toUpperCase()] = cols[1] || "";
+      }
+    });
+
+  return settings;
 }
 
 function hideAllScreens(){
@@ -422,8 +553,19 @@ function openScreen(screenId){
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
+function getClientId(){
+  let clientId = localStorage.getItem("clientId");
+
+  if(!clientId){
+    clientId = "client-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,10);
+    localStorage.setItem("clientId", clientId);
+  }
+
+  return clientId;
+}
+
 function clearForms(){
-  ["name","message","search","suggestArtist","suggestSong","suggestMessage","djMessageName","djMessageText"].forEach(id => {
+  ["name","message","search","freeArtist","freeSong","suggestArtist","suggestSong","suggestMessage","djMessageName","djMessageText"].forEach(id => {
     const field = document.getElementById(id);
     if(field){
       field.value = "";
@@ -437,6 +579,41 @@ function goHome(){
   document.getElementById("selectedSong").innerHTML = "";
   renderSongs("");
   openScreen("homeScreen");
+}
+
+function isFreeRequestMode(){
+  return appSettings.mode === "DJ" || appSettings.mode === "PRIVATE";
+}
+
+function setRequestScreenMode(mode,preset){
+  requestMode = mode;
+
+  const isFree = mode !== "KARAOKE";
+  const freeFields = document.getElementById("freeRequestFields");
+  const selectedBox = document.getElementById("selectedSong");
+  const changeButton = document.getElementById("changeSongButton");
+  const sendButton = document.getElementById("sendRequestButton");
+
+  freeFields.style.display = isFree ? "block" : "none";
+  changeButton.style.display = isFree ? "none" : "inline-block";
+  sendButton.innerText = isFree ? "Lähetä toive DJ:lle" : "Lähetä biisitoive DJ:lle";
+
+  if(isFree){
+    selectedSong = null;
+    selectedBox.innerHTML = "<strong>Vapaa DJ-toive</strong>Kirjoita kappale, artisti tai fiilis ilman pitkän listan selaamista.";
+    document.getElementById("freeArtist").value = preset && preset.artist ? preset.artist : "";
+    document.getElementById("freeSong").value = preset && preset.song ? preset.song : "";
+  }
+}
+
+function openRequestFlow(){
+  if(isFreeRequestMode()){
+    setRequestScreenMode(appSettings.mode);
+    openScreen("requestScreen");
+    return;
+  }
+
+  openScreen("songScreen");
 }
 
 function backToSongs(){
@@ -490,6 +667,8 @@ function renderSongs(filter = ""){
     button.addEventListener("click",() => {
       savedScrollPosition = songsDiv.scrollTop;
       selectedSong = item;
+      requestMode = "KARAOKE";
+      setRequestScreenMode("KARAOKE");
       document.getElementById("selectedSong").innerHTML = `
         <strong>Valittu biisi</strong>
         ${escapeHtml(item.song)}<br>
@@ -502,6 +681,133 @@ function renderSongs(filter = ""){
   });
 }
 
+function applyMode(mode){
+  const copy = {
+    KARAOKE:{
+      title:"BileKaraoke",
+      lead:"Valitse biisi, lähetä toive jonoon tai vinkkaa DJ:lle puuttuva kappale.",
+      request:"Lisää biisitoive jonoon",
+      suggestion:"Ehdota puuttuvaa kappaletta",
+      songTitle:"Mitä lauletaan?",
+      suggestionTitle:"Ehdota biisiä"
+    },
+    DJ:{
+      title:"Lex Live",
+      lead:"Vaikuta illan suuntaan, toivo biisiä ja lähetä fiilis DJ:lle.",
+      request:"Toivo biisiä DJ:lle",
+      suggestion:"Ehdota illan bängeriä",
+      songTitle:"Mitä soitetaan?",
+      suggestionTitle:"Ehdota biisiä listoille"
+    },
+    PRIVATE:{
+      title:"Lex Live Private",
+      lead:"Lähetä toiveita ja terveisiä illan yksityiseen juhlaan.",
+      request:"Lähetä toive",
+      suggestion:"Ehdota juhlaan sopivaa biisiä",
+      songTitle:"Mitä haluat kuulla?",
+      suggestionTitle:"Ehdota kappaletta"
+    }
+  }[mode] || null;
+
+  if(!copy){
+    return;
+  }
+
+  document.getElementById("appTitle").innerText = copy.title;
+  document.getElementById("appLead").innerText = copy.lead;
+  document.getElementById("requestButton").innerText = copy.request;
+  document.getElementById("suggestionButton").innerText = copy.suggestion;
+  document.getElementById("songScreenTitle").innerText = copy.songTitle;
+  document.getElementById("suggestionTitle").innerText = copy.suggestionTitle;
+}
+
+function renderLiveMessage(message){
+  const banner = document.getElementById("liveBanner");
+
+  if(!message){
+    banner.style.display = "none";
+    banner.innerHTML = "";
+    return;
+  }
+
+  banner.innerHTML = escapeHtml(message);
+  banner.style.display = "block";
+}
+
+function renderPicks(picks){
+  const panel = document.getElementById("picksPanel");
+  const list = document.getElementById("pickList");
+  const visiblePicks = picks.filter(pick => pick.title || pick.subtitle);
+
+  list.innerHTML = "";
+
+  if(!visiblePicks.length){
+    panel.style.display = "none";
+    return;
+  }
+
+  visiblePicks.forEach(pick => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "pick-card";
+    button.innerHTML = `
+      <div class="pick-name">${escapeHtml(pick.title || pick.subtitle)}</div>
+      ${pick.subtitle ? `<div class="pick-note">${escapeHtml(pick.subtitle)}</div>` : ""}
+    `;
+
+    button.addEventListener("click",() => {
+      if(isFreeRequestMode()){
+        setRequestScreenMode(appSettings.mode,{
+          artist:pick.subtitle,
+          song:pick.title
+        });
+        openScreen("requestScreen");
+        return;
+      }
+
+      const query = pick.title || pick.subtitle;
+      searchInput.value = query;
+      renderSongs(query);
+      openScreen("songScreen");
+    });
+
+    list.appendChild(button);
+  });
+
+  panel.style.display = "block";
+}
+
+function applySettings(settings){
+  const mode = (settings.APP_MODE || "KARAOKE").toUpperCase();
+
+  appSettings = {
+    mode,
+    liveMessage:settings.LIVE_MESSAGE || "",
+    picks:[
+      {
+        title:settings.PICK_1_TITLE || "",
+        subtitle:settings.PICK_1_SUBTITLE || ""
+      },
+      {
+        title:settings.PICK_2_TITLE || "",
+        subtitle:settings.PICK_2_SUBTITLE || ""
+      },
+      {
+        title:settings.PICK_3_TITLE || "",
+        subtitle:settings.PICK_3_SUBTITLE || ""
+      }
+    ]
+  };
+
+  applyMode(appSettings.mode);
+  renderLiveMessage(appSettings.liveMessage);
+  renderPicks(appSettings.picks);
+}
+
+function getCooldownSeconds(){
+  return isFreeRequestMode() ? DJ_COOLDOWN_SECONDS : COOLDOWN_SECONDS;
+}
+
 function getCooldownSecondsLeft(){
   const lastRequest = Number(localStorage.getItem("lastRequest") || 0);
   if(!lastRequest){
@@ -509,7 +815,7 @@ function getCooldownSecondsLeft(){
   }
 
   const secondsPassed = (Date.now() - lastRequest) / 1000;
-  return Math.max(0, Math.ceil(COOLDOWN_SECONDS - secondsPassed));
+  return Math.max(0, Math.ceil(getCooldownSeconds() - secondsPassed));
 }
 
 function requireCooldown(label){
@@ -578,8 +884,21 @@ async function sendRequest(event){
     return;
   }
 
-  if(!selectedSong){
+  const isFree = requestMode !== "KARAOKE";
+  const artist = isFree
+    ? document.getElementById("freeArtist").value.trim()
+    : selectedSong && selectedSong.artist;
+  const song = isFree
+    ? document.getElementById("freeSong").value.trim()
+    : selectedSong && selectedSong.song;
+
+  if(!isFree && !selectedSong){
     alert("Valitse kappale ensin.");
+    return;
+  }
+
+  if(isFree && !song){
+    alert("Kirjoita kappale, genre tai fiilis.");
     return;
   }
 
@@ -593,9 +912,12 @@ async function sendRequest(event){
 
   await runSubmit(event.target, "Lähetetään...", "", async () => {
     await postToAppsScript({
+      action:"request",
+      clientId:getClientId(),
+      requestMode,
       name,
-      artist:selectedSong.artist,
-      song:selectedSong.song,
+      artist,
+      song,
       message
     });
 
@@ -622,6 +944,7 @@ async function sendSuggestion(event){
   await runSubmit(event.target, "Lähetetään...", "Biisiehdotus lähetetty!", async () => {
     await postToAppsScript({
       action:"suggestion",
+      clientId:getClientId(),
       artist,
       song,
       message
@@ -645,6 +968,7 @@ async function sendDJMessage(event){
   await runSubmit(event.target, "Lähetetään...", "Viesti lähetetty DJ:lle.", async () => {
     await postToAppsScript({
       action:"djmessage",
+      clientId:getClientId(),
       name,
       message
     });
@@ -681,13 +1005,20 @@ async function loadMessageToggle(){
   try{
     const response = await fetch(MESSAGE_SETTINGS_URL);
     const text = await response.text();
-    const cols = (text.split("\n")[0] || "").split(",");
-    const value = (cols[1] || "ON").replace(/"/g,"").replace(/\r/g,"").trim().toUpperCase();
+    const settings = parseSettings(text);
+    const fallback = parseCsvLine(text.split("\n")[0] || "");
+    const value = (
+      settings.DJ_MESSAGES ||
+      fallback[1] ||
+      "ON"
+    ).toUpperCase();
     const messageButton = document.getElementById("messageScreenButton");
 
     if(messageButton){
       messageButton.style.display = value === "ON" ? "block" : "none";
     }
+
+    applySettings(settings);
   }catch(err){
     console.error(err);
   }
