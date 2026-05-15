@@ -1,2 +1,2 @@
-# summer-club-karaoke
+# LEX Live!
 DJ request system
